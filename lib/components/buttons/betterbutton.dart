@@ -13,9 +13,11 @@ class BetterButton extends StatelessWidget {
   const BetterButton(
     this.text, {
     super.key,
-    required this.onPressed,
-    required this.color,
-    this.style,
+    this.onPressed,
+    this.color = Colors.white,
+    this.style = const TextStyle(
+      color: Colors.black,
+    ),
     this.borderColor = Colors.transparent,
     this.overlayColor,
     this.padding = const EdgeInsets.all(0),
@@ -29,7 +31,8 @@ class BetterButton extends StatelessWidget {
       style: ButtonStyle(
         padding: MaterialStateProperty.all(padding),
         backgroundColor: MaterialStateProperty.all(color),
-        overlayColor: MaterialStateProperty.all(overlayColor ?? Colors.black.withOpacity(.1)),
+        overlayColor: MaterialStateProperty.all(
+            overlayColor ?? Colors.black.withOpacity(.1)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
@@ -37,10 +40,11 @@ class BetterButton extends StatelessWidget {
           ),
         ),
       ),
-      child: child ?? Text(
-        text,
-        style: style,
-      ),
+      child: child ??
+          Text(
+            text,
+            style: style,
+          ),
     );
   }
 }

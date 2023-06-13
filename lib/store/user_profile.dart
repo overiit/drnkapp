@@ -4,7 +4,11 @@ import 'package:drnk/utils/types.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Helper functions
-Future<void> saveUserProfile(UserProfile userProfile) async {
+Future<void> saveUserProfile(UserProfile? userProfile) async {
+  if (userProfile == null) {
+    await clearUserProfile();
+    return;
+  }
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // Convert UserProfile to JSON-like data

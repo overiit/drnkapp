@@ -34,7 +34,7 @@ class _MyAppState extends State<MainApp> {
     drinks = await loadDrinksList() ?? [];
   }
 
-  updateUserProfile(UserProfile userProfile) {
+  updateUserProfile(UserProfile? userProfile) {
     setState(() {
       this.userProfile = userProfile;
       saveUserProfile(userProfile);
@@ -85,7 +85,7 @@ class _MyAppState extends State<MainApp> {
 class MainNav extends StatefulWidget {
   final UserProfile? userProfile;
   final List<Drink> drinks;
-  final Function(UserProfile) updateUserProfile;
+  final Function(UserProfile?) updateUserProfile;
 
   const MainNav(
       {super.key,

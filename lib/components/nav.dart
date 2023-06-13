@@ -43,50 +43,47 @@ class Navigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
-      child: Container(
-        // height: 50,
-        decoration: BoxDecoration(
+    return Container(
+      // height: 50,
+      decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              buildNavItem(
-                context,
-                path: "/",
-                icon: Icons.home_rounded,
-              ),
-              // const SizedBox(width: 5),
-              // buildNavItem(
-              //   context,
-              //   path: "/history",
-              //   icon: Icons.local_bar_rounded,
-              // ),
-              const SizedBox(width: 5),
-              buildNavItem(
-                context,
-                path: "/add_drink",
-                icon: Icons.add_rounded,
-              ),
-              // const SizedBox(width: 5),
-              // buildNavItem(
-              //   context,
-              //   path: "/insights",
-              //   icon: Icons.insights,
-              // ),
-              const SizedBox(width: 5),
-              buildNavItem(
-                context,
-                path: "/settings",
-                icon: Icons.tune_rounded,
-              ),
-            ],
-          ),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(5), topRight: Radius.circular(5))),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            buildNavItem(
+              context,
+              path: "/",
+              icon: Icons.home_rounded,
+            ),
+            // const SizedBox(width: 5),
+            // buildNavItem(
+            //   context,
+            //   path: "/history",
+            //   icon: Icons.local_bar_rounded,
+            // ),
+            const SizedBox(width: 5),
+            buildNavItem(
+              context,
+              path: "/add_drink",
+              icon: Icons.add_rounded,
+            ),
+            // const SizedBox(width: 5),
+            // buildNavItem(
+            //   context,
+            //   path: "/insights",
+            //   icon: Icons.insights,
+            // ),
+            const SizedBox(width: 5),
+            buildNavItem(
+              context,
+              path: "/settings",
+              icon: Icons.tune_rounded,
+            ),
+          ],
         ),
       ),
     );
