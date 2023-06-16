@@ -1,18 +1,17 @@
 import 'package:drnk/components/buttons/OutlinedTextField.dart';
 import 'package:drnk/components/buttons/betterbutton.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AddDrink extends StatefulWidget {
-  final Function(Drink) createDrink;
-  const AddDrink({super.key, required this.createDrink});
-
   @override
-  _AddDrinkState createState() => _AddDrinkState();
+  AddDrinkState createState() => AddDrinkState();
 }
 
-class _AddDrinkState extends State<AddDrink> {
+class AddDrinkState extends State<AddDrink> {
   DrinkType? drinkType;
   Liquid liquid = Liquid(unit: LiquidUnit.ml, amount: 0);
   TextEditingController amountController = TextEditingController();
@@ -20,6 +19,8 @@ class _AddDrinkState extends State<AddDrink> {
   TextEditingController percentageController = TextEditingController();
   int timeago = 0;
   TextEditingController timeagoController = TextEditingController();
+
+  bool saving = false;
 
   @override
   void initState() {
@@ -49,8 +50,12 @@ class _AddDrinkState extends State<AddDrink> {
     if (drinkType == null) {
       return;
     }
+    setState(() {
+      saving = true;
+    });
+    DrinksModel drinksModel = Get.find<DrinksModel>();
     // timestamp is int
-    widget.createDrink(Drink(
+    drinksModel.addDrink(Drink(
       type: drinkType!,
       liquid: liquid,
       percentage: percentage,
@@ -58,12 +63,15 @@ class _AddDrinkState extends State<AddDrink> {
           .subtract(Duration(minutes: (60 * (timeago ?? 0)).toInt()))
           .millisecondsSinceEpoch,
     ));
-    setState(() {
-      drinkType = null;
-      amountController.clear();
-      percentageController.clear();
-      timeagoController.clear();
-    });
+    Get.back();
+    Get.snackbar(
+      'Drink added',
+      'You have added a drink',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: Duration(seconds: 2),
+    );
   }
 
   @override
@@ -77,7 +85,7 @@ class _AddDrinkState extends State<AddDrink> {
   Widget buildDrinkType(DrinkType type) {
     bool isActive = drinkType == type;
     return Container(
-      padding: EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 15),
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -258,22 +266,14 @@ class _AddDrinkState extends State<AddDrink> {
           end: Alignment.centerRight,
         ),
       ),
-      child: TextButton(
-        onPressed: () {
-          createDrink();
-        },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
+      child: BetterButton(
+        !saving ? "ADD DRINK" : "ADDING...",
+        color: Colors.white.withOpacity(!saving ? 1 : .2),
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w900,
         ),
-        child: const Text(
-          'ADD DRINK',
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -.5),
-        ),
+        onPressed: !saving ? createDrink : null,
       ),
     );
   }

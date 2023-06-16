@@ -1,41 +1,28 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
 
 class Navigation extends StatelessWidget {
   const Navigation({super.key});
 
-  Widget buildNavItem2(BuildContext context,
-      {required String path, required IconData icon}) {
-    String? activeRoute = ModalRoute.of(context)?.settings.name;
-    bool active = activeRoute == path;
-    return IconButton(
-      icon: Icon(icon),
-      color: Colors.black.withOpacity(active ? 1 : .5),
-      padding: EdgeInsets.zero,
-      splashRadius: 1,
-      onPressed: () {
-        Get.toNamed(path);
-      },
-    );
-  }
-
   Widget buildNavItem(BuildContext context,
       {required String path, required IconData icon}) {
     String? activeRoute = ModalRoute.of(context)?.settings.name;
-    bool active = activeRoute == path;
+    bool isHome = path == "/";
+    bool active = activeRoute == path ||
+        (isHome && activeRoute == "/") ||
+        (!isHome && (activeRoute ?? "/").startsWith(path));
     return Expanded(
       child: BetterButton(
         "",
         onPressed: () {
           Get.toNamed(path);
         },
-        overlayColor: Colors.black.withOpacity(.1),
-        color: Colors.black.withOpacity(active ? .1 : 0),
+        overlayColor: Colors.white.withOpacity(.1),
+        color: Colors.white.withOpacity(active ? .1 : 0),
         child: Icon(
           icon,
-          color: active ? Colors.black : Colors.black.withOpacity(.5),
+          color: Colors.white.withOpacity(active ? 1 : .5),
         ),
       ),
     );
@@ -45,8 +32,8 @@ class Navigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // height: 50,
-      decoration: const BoxDecoration(
-          color: Colors.white,
+      decoration: BoxDecoration(
+          color: Colors.white.withOpacity(.1),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(5), topRight: Radius.circular(5))),
       child: Padding(

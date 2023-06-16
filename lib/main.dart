@@ -4,6 +4,7 @@ import 'package:drnk/routes/add_drink.dart';
 import 'package:drnk/routes/history.dart';
 import 'package:drnk/routes/home.dart';
 import 'package:drnk/routes/settings.dart';
+import 'package:drnk/routes/settings/ProfileWeight.dart';
 import 'package:drnk/routes/welcome.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:flutter/material.dart';
@@ -58,19 +59,17 @@ class MainApp extends StatelessWidget {
             builder = (context) => NavigatedPage(child: Home());
             break;
           case "/history":
-            builder = (context) => NavigatedPage(child: History(drinks: []));
+            builder = (context) => NavigatedPage(child: History());
             break;
           case "/settings":
-            builder = (context) => NavigatedPage(
-                  child: Settings(),
-                );
+            builder = (context) => NavigatedPage(child: Settings());
             break;
           case "/add_drink":
-            builder = (context) => NavigatedPage(
-                  child: AddDrink(
-                    createDrink: (d) {},
-                  ),
-                );
+            builder = (context) => NavigatedPage(child: AddDrink());
+            break;
+          case "/settings/profile/weight":
+            builder =
+                (context) => NavigatedPage(child: ProfileWeightSettings());
             break;
           default:
             return null;
@@ -78,6 +77,12 @@ class MainApp extends StatelessWidget {
 
         return NoAnimationPageRoute(
           builder: builder,
+          settings: settings,
+        );
+      },
+      onUnknownRoute: (settings) {
+        return NoAnimationPageRoute(
+          builder: (context) => NavigatedPage(child: Text("404")),
           settings: settings,
         );
       },
@@ -100,10 +105,10 @@ class NavigatedPageState extends State<NavigatedPage> {
     DataLoader dataLoader = Get.find<DataLoader>();
     UserProfileModel profileModel = Get.find<UserProfileModel>();
     return Obx(() {
-      if (!dataLoader.loaded.value) {
+      if (!dataLoader.loaded) {
         return Loader();
       }
-      if (profileModel.weight.value.amount == 0) {
+      if (profileModel.weight.amount == 0) {
         return Scaffold(
           body: Welcome(),
         );

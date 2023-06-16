@@ -4,34 +4,41 @@ import 'package:drnk/utils/types.dart';
 import 'package:get/get.dart';
 
 class UserProfileModel extends GetxController implements Mappable {
-  Rx<Weight> weight = Weight(amount: 0, unit: WeightUnit.kg).obs;
-  Rx<Sex> sex = Sex.male.obs;
+  final Rx<Weight> _weight = Weight(amount: 0, unit: WeightUnit.kg).obs;
+  final Rx<Sex> _sex = Sex.male.obs;
 
   Future<void> load() async {
     await loadItem(storageUserProfileKey, overrideFromMap);
     update();
   }
 
-  void setSex(Sex sex) {
-    this.sex.value = sex;
+  Weight get weight {
+    return _weight.value;
   }
 
-  void setWeight(Weight weight) {
-    this.weight.value = weight;
+  Sex get sex {
+    return _sex.value;
+  }
+
+  set sex(Sex sex) {
+    _sex.value = sex;
+  }
+
+  set weight(Weight weight) {
+    _weight.value = weight;
   }
 
   @override
   Map<String, dynamic> toMap() {
     return {
-      'weight': weight.value.toMap(),
-      'sex': sex.toString(),
+      'weight': _weight.value.toMap(),
+      'sex': _sex.toString(),
     };
   }
 
   UserProfileModel overrideFromMap(Map<String, dynamic> map) {
-    weight.value = Weight.fromMap(map['weight']);
-    sex.value =
-        Sex.values.firstWhere((element) => element.toString() == map['sex']);
+    weight = Weight.fromMap(map['weight']);
+    sex = Sex.values.firstWhere((element) => element.toString() == map['sex']);
     update();
     return this;
   }
@@ -120,35 +127,29 @@ class DrinksModel extends GetxController implements Mappable {
 }
 
 class PreferenceModel extends GetxController implements Mappable {
-  Rx<WeightUnit> weightUnit = WeightUnit.kg.obs;
-  Rx<LiquidUnit> liquidUnit = LiquidUnit.ml.obs;
+  final Rx<LiquidUnit> _liquidUnit = LiquidUnit.ml.obs;
+
+  LiquidUnit get liquidUnit {
+    return _liquidUnit.value;
+  }
+
+  set liquidUnit(LiquidUnit liquidUnit) {
+    _liquidUnit.value = liquidUnit;
+  }
 
   Future<void> load() async {
     await loadItem(storagePreferenceKey, overrideFromMap);
   }
 
-  void setWeightUnit(WeightUnit weightUnit) {
-    this.weightUnit.value = weightUnit;
-  }
-
-  void setLiquidUnit(LiquidUnit liquidUnit) {
-    this.liquidUnit.value = liquidUnit;
-  }
-
   @override
   Map<String, dynamic> toMap() {
     return {
-      'weightUnit': weightUnit.toString(),
       'liquidUnit': liquidUnit.toString(),
     };
   }
 
   PreferenceModel overrideFromMap(Map<String, dynamic> map) {
-    weightUnit.value = WeightUnit.values.firstWhere(
-      (element) => element.toString() == map['weightUnit'],
-      orElse: () => WeightUnit.kg,
-    );
-    liquidUnit.value = LiquidUnit.values.firstWhere(
+    liquidUnit = LiquidUnit.values.firstWhere(
       (element) => element.toString() == map['liquidUnit'],
       orElse: () => LiquidUnit.ml,
     );
@@ -158,7 +159,15 @@ class PreferenceModel extends GetxController implements Mappable {
 }
 
 class DataLoader extends GetxController {
-  RxBool loaded = false.obs;
+  final RxBool _loaded = false.obs;
+
+  bool get loaded {
+    return _loaded.value;
+  }
+
+  set loaded(bool loaded) {
+    _loaded.value = loaded;
+  }
 
   @override
   void onReady() {
@@ -170,7 +179,7 @@ class DataLoader extends GetxController {
     await Get.find<UserProfileModel>().load();
     await Get.find<DrinksModel>().load();
     await Get.find<PreferenceModel>().load();
-    loaded.value = true;
+    loaded = true;
     update();
   }
 }

@@ -1,8 +1,6 @@
-import "package:drnk/store/storage.dart";
 import "package:drnk/store/stores.dart";
 import "package:drnk/utils/colors.dart";
 import "package:flutter/material.dart";
-import "package:get/get.dart";
 
 import "./types.dart";
 
@@ -146,8 +144,8 @@ double calculateBacAtStart(
 
 // calculate the bac for a drink
 double calculateDrinkBac(UserProfileModel userProfile, Drink drink) {
-  final weight = userProfile.weight.value;
-  final sex = userProfile.sex.value;
+  final weight = userProfile.weight;
+  final sex = userProfile.sex;
   final percentage = drink.percentage;
 
   final alcoholInOz =

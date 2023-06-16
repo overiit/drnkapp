@@ -189,8 +189,8 @@ class _WelcomeState extends State<Welcome> {
                               } else {
                                 UserProfileModel userProfile =
                                     Get.find<UserProfileModel>();
-                                userProfile.setSex(sex);
-                                userProfile.setWeight(weight);
+                                userProfile.sex = sex;
+                                userProfile.weight = weight;
                                 userProfile.update();
                               }
                             }

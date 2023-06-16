@@ -1,17 +1,15 @@
 import 'dart:async';
 
 import 'package:drnk/components/dot_pagination.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 class Header extends StatefulWidget {
-  final List<Drink> drinks;
-
-  const Header({super.key, required this.drinks});
-
   @override
   HeaderState createState() => HeaderState();
 }
@@ -30,10 +28,11 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
   int timeUntilSober = 0;
 
   void update() {
+    DrinksModel drinksModel = Get.find<DrinksModel>();
     setState(() {
-      if (widget.drinks.isNotEmpty) {
-        bac = calculateBac(widget.drinks[0]);
-        timeUntilSober = calculateTimeUntilSober(widget.drinks[0]);
+      if (drinksModel.drinks.isNotEmpty) {
+        bac = calculateBac(drinksModel.drinks[0]);
+        timeUntilSober = calculateTimeUntilSober(drinksModel.drinks[0]);
       } else {
         bac = 0;
         timeUntilSober = 0;
@@ -192,7 +191,7 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
                 right: 5,
                 bottom: 0,
                 child: Icon(
-                  infoHeight == 0
+                  infoHeight > 42
                       ? Icons.keyboard_arrow_down
                       : Icons.keyboard_arrow_up,
                   color: Colors.black.withOpacity(.5),
@@ -208,7 +207,7 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
   Widget buildInfo() {
     HealthStatus healthStatus = bacHealthStatus(bac);
     return Container(
-      height: infoHeight + 100,
+      height: infoHeight > 0 ? infoHeight + 114 : 0,
       padding: EdgeInsets.fromLTRB(15, infoHeight, 15, 10),
       child: Column(
         children: [

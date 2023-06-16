@@ -1,16 +1,15 @@
 import 'dart:math';
 
 import 'package:drnk/components/drink_listview.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DrinkSummary extends StatelessWidget {
-  final List<Drink> drinks = [];
-
-  DrinkSummary({super.key});
-
   @override
   Widget build(BuildContext context) {
+    DrinksModel drinksModel = Get.find<DrinksModel>();
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
       child: Column(
@@ -28,36 +27,38 @@ class DrinkSummary extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
-          Stack(
-            children: [
-              DrinkListView(
-                drinks: drinks.sublist(
-                  0,
-                  min(5, drinks.length),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: -1,
-                right: 1,
-                height: min(3, drinks.length) * 50,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF181818).withOpacity(0),
-                        Color(0xFF181818)
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0, 1],
-                    ),
-                    // color: Colors.red
+          Obx(
+            () => Stack(
+              children: [
+                DrinkListView(
+                  drinks: drinksModel.drinks.sublist(
+                    0,
+                    min(5, drinksModel.drinks.length),
                   ),
                 ),
-              ),
-            ],
+                Positioned(
+                  bottom: 0,
+                  left: -1,
+                  right: 1,
+                  height: min(3, drinksModel.drinks.length) * 50,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF181818).withOpacity(0),
+                          Color(0xFF181818)
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0, 1],
+                      ),
+                      // color: Colors.red
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           // Row(
           //   children: [
