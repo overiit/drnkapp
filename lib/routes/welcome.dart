@@ -2,16 +2,14 @@ import 'package:drnk/components/buttons/OutlinedTextField.dart';
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/components/dot_pagination.dart';
 import 'package:drnk/components/terms.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Welcome extends StatefulWidget {
-  final Function(UserProfile) updateUserProfile;
-
-  Welcome({super.key, required this.updateUserProfile});
-
   @override
   _WelcomeState createState() => _WelcomeState();
 }
@@ -189,8 +187,11 @@ class _WelcomeState extends State<Welcome> {
                                   welcomeForm = true;
                                 });
                               } else {
-                                widget.updateUserProfile(
-                                    UserProfile(sex: sex, weight: weight));
+                                UserProfileModel userProfile =
+                                    Get.find<UserProfileModel>();
+                                userProfile.setSex(sex);
+                                userProfile.setWeight(weight);
+                                userProfile.update();
                               }
                             }
                           : null,

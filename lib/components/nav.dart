@@ -1,15 +1,14 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 class Navigation extends StatelessWidget {
-  final String activeRoute;
-  final Function(String) onNavigate;
-
-  const Navigation(
-      {super.key, required this.onNavigate, required this.activeRoute});
+  const Navigation({super.key});
 
   Widget buildNavItem2(BuildContext context,
       {required String path, required IconData icon}) {
+    String? activeRoute = ModalRoute.of(context)?.settings.name;
     bool active = activeRoute == path;
     return IconButton(
       icon: Icon(icon),
@@ -17,19 +16,20 @@ class Navigation extends StatelessWidget {
       padding: EdgeInsets.zero,
       splashRadius: 1,
       onPressed: () {
-        onNavigate(path);
+        Get.toNamed(path);
       },
     );
   }
 
   Widget buildNavItem(BuildContext context,
       {required String path, required IconData icon}) {
+    String? activeRoute = ModalRoute.of(context)?.settings.name;
     bool active = activeRoute == path;
     return Expanded(
       child: BetterButton(
         "",
         onPressed: () {
-          onNavigate(path);
+          Get.toNamed(path);
         },
         overlayColor: Colors.black.withOpacity(.1),
         color: Colors.black.withOpacity(active ? .1 : 0),
@@ -45,7 +45,7 @@ class Navigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // height: 50,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(5), topRight: Radius.circular(5))),

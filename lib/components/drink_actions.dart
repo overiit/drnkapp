@@ -1,11 +1,8 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DrinkActions extends StatelessWidget {
-  final Function(String) onNavigate;
-
-  const DrinkActions({super.key, required this.onNavigate});
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,7 +13,7 @@ class DrinkActions extends StatelessWidget {
             child: BetterButton(
               "ADD DRINK",
               onPressed: () {
-                onNavigate("/add_drink");
+                Get.toNamed("/add_drink");
               },
               color: Colors.white,
               style: const TextStyle(
@@ -33,16 +30,15 @@ class DrinkActions extends StatelessWidget {
             child: BetterButton(
               "VIEW DRINKS",
               onPressed: () {
-                onNavigate("/history");
+                Get.toNamed("/history");
               },
-              color: Colors.transparent,
+              color: Colors.white.withOpacity(.1),
               overlayColor: Colors.white.withOpacity(.1),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
               ),
-              borderColor: Colors.white,
             ),
           ),
         ],

@@ -113,10 +113,13 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
             ],
           ),
         ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: const Image(
-            image: AssetImage('lib/assets/bottle.png'),
+        Container(
+          padding: const EdgeInsets.only(right: 5),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: const Image(
+              image: AssetImage('lib/assets/bottle.png'),
+            ),
           ),
         ),
       ],
@@ -157,7 +160,7 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
                   String value = '---';
                   if (index == 0) {
                     display = 'Alcohol Level';
-                    value = bac.toStringAsFixed(3) + ' %';
+                    value = '${bac.toStringAsFixed(3)} %';
                   } else if (index == 1) {
                     display = 'Time Until Sober';
                     value = timeSpanDuration(timeUntilSober);

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String storageUserProfileKey = "userProfile";
 String storageDrinkListKey = "drinkList";
+String storagePreferenceKey = "preference";
 
 Future<void> saveList<T extends Mappable>(String key, List<T>? list) async {
   if (list == null) {
@@ -25,8 +26,9 @@ Future<List<T>> loadList<T>(
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   if (prefs.containsKey(key)) {
-    String dataListString = prefs.getString(key)!;
-    List<dynamic> dataListData = jsonDecode(dataListString);
+    List<String> dataListString = prefs.getStringList(key)!;
+    List<dynamic> dataListData =
+        dataListString.map((str) => jsonDecode(str)).toList();
     List<T> dataList = dataListData
         .map((data) => fromMap(data as Map<String, dynamic>))
         .toList();

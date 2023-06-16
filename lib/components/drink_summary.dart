@@ -5,10 +5,9 @@ import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 
 class DrinkSummary extends StatelessWidget {
-  final List<Drink> drinks;
-  final Function(String) onNavigate;
+  final List<Drink> drinks = [];
 
-  const DrinkSummary({super.key, required this.drinks, required this.onNavigate});
+  DrinkSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,10 @@ class DrinkSummary extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF181818).withOpacity(0), Color(0xFF181818)],
+                      colors: [
+                        Color(0xFF181818).withOpacity(0),
+                        Color(0xFF181818)
+                      ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       stops: [0, 1],

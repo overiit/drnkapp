@@ -149,30 +149,3 @@ class Weight extends Mappable {
 }
 
 enum Sex { male, female }
-
-class UserProfile extends Mappable {
-  Sex sex;
-  Weight weight;
-
-  UserProfile({required this.sex, required this.weight});
-
-  @override
-  String toString() {
-    return "UserProfile: $sex, $weight";
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      'sex': sex.toString(),
-      'weight': weight.toMap(),
-    };
-  }
-
-  static UserProfile fromMap(Map<String, dynamic> map) {
-    return UserProfile(
-      sex: Sex.values.firstWhere((e) => e.toString() == map['sex']),
-      weight: Weight.fromMap(map['weight']),
-    );
-  }
-}

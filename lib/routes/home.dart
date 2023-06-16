@@ -2,17 +2,12 @@ import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/components/drink_actions.dart';
 import 'package:drnk/components/drink_summary.dart';
 import 'package:drnk/components/header.dart';
-import 'package:drnk/store/preferences.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
-  final Function(String) onNavigate;
-  final List<Drink> drinks;
-
-  const Home({super.key, required this.onNavigate, required this.drinks});
-
   @override
   HomeState createState() => HomeState();
 }
@@ -26,15 +21,10 @@ class HomeState extends State<Home> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Header(
-          drinks: widget.drinks,
+          drinks: [],
         ),
-        DrinkActions(
-          onNavigate: widget.onNavigate,
-        ),
-        DrinkSummary(
-          drinks: widget.drinks,
-          onNavigate: widget.onNavigate,
-        )
+        DrinkActions(),
+        DrinkSummary()
       ],
     );
   }

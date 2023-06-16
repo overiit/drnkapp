@@ -1,6 +1,5 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
-import 'package:drnk/routes/welcome.dart';
-import 'package:drnk/store/preferences.dart';
+import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,12 +14,6 @@ enum SettingOption {
 }
 
 class Settings extends StatefulWidget {
-  final UserProfile userProfile;
-  final Function(UserProfile?) updateUserProfile;
-
-  const Settings(
-      {super.key, required this.userProfile, required this.updateUserProfile});
-
   @override
   SettingsState createState() => SettingsState();
 }
@@ -36,8 +29,10 @@ class SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    weight = widget.userProfile.weight;
-    sex = widget.userProfile.sex;
+    UserProfileModel userProfileModel = Get.find();
+
+    weight = userProfileModel.weight.value;
+    sex = userProfileModel.sex.value;
   }
 
   List<Widget> buildMainSettings() {
@@ -229,9 +224,9 @@ class SettingsState extends State<Settings> {
                   "SAVE",
                   onPressed: changed
                       ? () {
-                          widget.updateUserProfile(
-                            UserProfile(sex: sex, weight: weight),
-                          );
+                          // widget.updateUserProfile(
+                          //   UserProfile(sex: sex, weight: weight),
+                          // );
                           Get.snackbar(
                             "Saved",
                             "Your settings have been saved.",
@@ -290,7 +285,7 @@ class SettingsState extends State<Settings> {
                     onPressed: () {
                       setState(() {
                         resetApp = false;
-                        widget.updateUserProfile(null);
+                        // widget.updateUserProfile(null);
                       });
                     },
                   ),

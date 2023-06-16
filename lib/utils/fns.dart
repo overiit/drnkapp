@@ -1,6 +1,8 @@
 import "package:drnk/store/storage.dart";
+import "package:drnk/store/stores.dart";
 import "package:drnk/utils/colors.dart";
 import "package:flutter/material.dart";
+import "package:get/get.dart";
 
 import "./types.dart";
 
@@ -127,7 +129,7 @@ double bacDecrease(int durationMs) =>
 
 // calculate the bac at the start of a drink
 double calculateBacAtStart(
-    UserProfile userProfile, Drink drink, Drink? previousDrink) {
+    UserProfileModel userProfile, Drink drink, Drink? previousDrink) {
   var bacAtStart = 0.0;
   if (previousDrink != null) {
     final bacStart = previousDrink.calc?.bacStart ?? 0;
@@ -143,9 +145,9 @@ double calculateBacAtStart(
 }
 
 // calculate the bac for a drink
-double calculateDrinkBac(UserProfile userProfile, Drink drink) {
-  final weight = userProfile.weight;
-  final sex = userProfile.sex;
+double calculateDrinkBac(UserProfileModel userProfile, Drink drink) {
+  final weight = userProfile.weight.value;
+  final sex = userProfile.sex.value;
   final percentage = drink.percentage;
 
   final alcoholInOz =
@@ -184,70 +186,6 @@ int calculateTimeUntilSober(Drink drink) {
   final timeUntilSober = (currentBac / 0.015) * 60.0 * 60.0 * 1000.0;
 
   return timeUntilSober.toInt();
-}
-
-List<Drink> addDrink(
-    UserProfile userProfile, List<Drink> drinks, Drink drinkInput) {
-  // sort the drinks by timestamp (oldest to newest)
-  drinks.sort((a, b) => a.timestamp - b.timestamp);
-  // if there is a drink with the exact same drank_at, add 1 millisecond to the new drink
-  var done = false;
-  while (!done) {
-    final sameTimeDrink = drinks.firstWhere(
-        (d) => d.timestamp == drinkInput.timestamp,
-        orElse: () => noDrink);
-    if (sameTimeDrink != noDrink) {
-      drinkInput.timestamp++;
-    } else {
-      done = true;
-    }
-  }
-
-// get the most drink that was before the new drink
-  final previousDrink = drinks.lastWhere(
-      (d) => d.timestamp < drinkInput.timestamp,
-      orElse: () => noDrink);
-
-// calculate the bac for the new drink
-  drinkInput.calc = DrinkCalc(
-    bacStart: calculateBacAtStart(userProfile, drinkInput,
-        previousDrink == noDrink ? null : previousDrink),
-    bacDrink: calculateDrinkBac(userProfile, drinkInput),
-  );
-
-// add the new drink to the drinks array at the index of the most recent drink
-  if (previousDrink != noDrink) {
-    drinks.insert(drinks.indexOf(previousDrink), drinkInput);
-    drinks.sort((a, b) => a.timestamp - b.timestamp);
-  } else {
-    drinks.insert(0, drinkInput);
-  }
-  int lastTimestamp = 0;
-// calculate the bac for all drinks after the new drink
-  for (var i = drinks.indexOf(drinkInput); i < drinks.length; i++) {
-    final drink = drinks[i];
-    final previousDrink = i > 0 ? drinks.elementAt(i - 1) : noDrink;
-// check if the previous drink is actually the previous drink and throw an error if not
-    if (previousDrink != noDrink && drink.timestamp < previousDrink.timestamp) {
-      print('Drinks are not sorted correctly');
-    }
-    if (drink.timestamp < lastTimestamp) {
-      print('Drinks are not sorted correctly');
-    }
-    drink.calc = DrinkCalc(
-      bacStart: calculateBacAtStart(
-          userProfile, drink, previousDrink == noDrink ? null : previousDrink),
-      bacDrink: calculateDrinkBac(userProfile, drink),
-    );
-  }
-
-  // reverse the drinks for the UI
-  drinks.sort((a, b) => b.timestamp - a.timestamp);
-
-  // save the drinks to the database
-  saveList(storageDrinkListKey, drinks);
-
-  return drinks;
 }
 
 class HealthStatus {
