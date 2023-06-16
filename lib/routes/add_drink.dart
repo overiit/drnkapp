@@ -25,29 +25,23 @@ class _AddDrinkState extends State<AddDrink> {
   void initState() {
     super.initState();
     amountController.addListener(() {
-      setState(() {
-        double? parsed = double.tryParse(amountController.text);
-        liquid = Liquid(unit: liquid.unit, amount: parsed ?? 0);
-      });
+      double? parsed = double.tryParse(amountController.text);
+      liquid = Liquid(unit: liquid.unit, amount: parsed ?? 0);
     });
     percentageController.addListener(() {
-      setState(() {
-        percentage = double.tryParse(percentageController.text) ?? 0;
-      });
+      percentage = double.tryParse(percentageController.text) ?? 0;
     });
     timeagoController.addListener(() {
-      setState(() {
-        int? parsed = int.tryParse(timeagoController.text);
-        if (parsed == null) {
+      int? parsed = int.tryParse(timeagoController.text);
+      if (parsed == null) {
+        timeago = 0;
+      } else {
+        if (parsed.isNaN) {
           timeago = 0;
         } else {
-          if (parsed.isNaN) {
-            timeago = 0;
-          } else {
-            timeago = parsed;
-          }
+          timeago = parsed;
         }
-      });
+      }
     });
   }
 
@@ -166,6 +160,7 @@ class _AddDrinkState extends State<AddDrink> {
         hintText: "Drink Amount",
         isNumber: true,
         controller: amountController,
+        initialValue: liquid.amount.toString(),
         onChanged: (amount) {
           setState(() {
             liquid.amount = double.tryParse(amount) ?? 0;
@@ -183,6 +178,7 @@ class _AddDrinkState extends State<AddDrink> {
         hintText: "Percentage",
         isNumber: true,
         controller: percentageController,
+        initialValue: percentage.toString(),
         onChanged: (percentage) {
           setState(() {
             this.percentage = double.tryParse(percentage) ?? 0;
@@ -192,7 +188,6 @@ class _AddDrinkState extends State<AddDrink> {
     );
   }
 
-  // NOW, 1H, Input(timeago)
   Widget buildTimeAgo() {
     return Expanded(
       child: BetterTextField(
@@ -201,6 +196,7 @@ class _AddDrinkState extends State<AddDrink> {
         hintText: "Hours ago",
         isNumber: true,
         controller: timeagoController,
+        initialValue: timeago.toString(),
         onChanged: (timeago) {
           setState(() {
             this.timeago = int.tryParse(timeago) ?? 0;

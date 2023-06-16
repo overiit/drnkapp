@@ -4,7 +4,7 @@ class BetterTextField extends StatefulWidget {
   final Color color;
   final TextStyle style;
   final String hintText;
-  final String forcedValue;
+  final String initialValue;
   final double padding;
   final bool isNumber;
   final TextEditingController? controller;
@@ -18,7 +18,7 @@ class BetterTextField extends StatefulWidget {
     required this.style,
     required this.hintText,
     this.onChanged,
-    this.forcedValue = "",
+    this.initialValue = "",
     this.isNumber = false,
     this.controller,
   });
@@ -35,8 +35,9 @@ class BetterTextFieldState extends State<BetterTextField> {
     super.initState();
     if (widget.controller != null) {
       controller = widget.controller!;
+      controller.text = widget.initialValue;
     } else {
-      controller = TextEditingController(text: widget.forcedValue);
+      controller = TextEditingController(text: widget.initialValue);
     }
   }
 

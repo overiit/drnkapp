@@ -1,4 +1,4 @@
-import "package:drnk/store/drinks.dart";
+import "package:drnk/store/storage.dart";
 import "package:drnk/utils/colors.dart";
 import "package:flutter/material.dart";
 
@@ -115,9 +115,9 @@ String timeSpanDuration(int timeMs, [num Function(num)? numberModifier]) {
 
 // Example constants
 const avgAlcoholBloodDistributionValue = 5.14; // replace this value accordingly
-double alcoholDistributionRatio(Gender gender) {
-  if (gender == Gender.male) return 0.73;
-  if (gender == Gender.female) return 0.66;
+double alcoholDistributionRatio(Sex sex) {
+  if (sex == Sex.male) return 0.73;
+  if (sex == Sex.female) return 0.66;
   return 0.7; // avg
 }
 
@@ -145,13 +145,13 @@ double calculateBacAtStart(
 // calculate the bac for a drink
 double calculateDrinkBac(UserProfile userProfile, Drink drink) {
   final weight = userProfile.weight;
-  final gender = userProfile.gender;
+  final sex = userProfile.sex;
   final percentage = drink.percentage;
 
   final alcoholInOz =
       convertLiquid(drink.liquid, LiquidUnit.oz).amount * (percentage / 100);
   final weightInLbs = convertWeight(weight, WeightUnit.lb);
-  double alcoholDistRatio = alcoholDistributionRatio(gender);
+  double alcoholDistRatio = alcoholDistributionRatio(sex);
   final drinkBac = ((alcoholInOz * avgAlcoholBloodDistributionValue) /
       (weightInLbs.amount * alcoholDistRatio));
 
@@ -245,7 +245,7 @@ List<Drink> addDrink(
   drinks.sort((a, b) => b.timestamp - a.timestamp);
 
   // save the drinks to the database
-  saveDrinksList(drinks);
+  saveList(storageDrinkListKey, drinks);
 
   return drinks;
 }
@@ -271,11 +271,9 @@ HealthStatus bacHealthStatus(double bac) {
     );
   } else if (bac < 0.030) {
     return HealthStatus(
-      description:
-          'Seems normal; subtle effects detected via special tests.',
-      color: goodColor,
-      driverNotice: bac > 0.02
-    );
+        description: 'Seems normal; subtle effects detected via special tests.',
+        color: goodColor,
+        driverNotice: bac > 0.02);
   } else if (bac < 0.060) {
     return HealthStatus(
       description:

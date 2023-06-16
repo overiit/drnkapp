@@ -184,6 +184,17 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
                   },
                 ),
               ),
+              // A arrow icon to indicate that the user can tap on the header to expand it
+              Positioned(
+                right: 5,
+                bottom: 0,
+                child: Icon(
+                  infoHeight == 0
+                      ? Icons.keyboard_arrow_down
+                      : Icons.keyboard_arrow_up,
+                  color: Colors.black.withOpacity(.5),
+                ),
+              ),
             ],
           ),
         ),

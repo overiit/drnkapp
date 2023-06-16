@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:drnk/components/nav.dart';
+import 'package:drnk/components/terms.dart';
 import 'package:drnk/components/topnav.dart';
 import 'package:drnk/routes/add_drink.dart';
 import 'package:drnk/routes/history.dart';
 import 'package:drnk/routes/home.dart';
 import 'package:drnk/routes/settings.dart';
 import 'package:drnk/routes/welcome.dart';
-import 'package:drnk/store/drinks.dart';
-import 'package:drnk/store/user_profile.dart';
+import 'package:drnk/store/preferences.dart';
+import 'package:drnk/store/storage.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-void main() {
+void main() async {
   runApp(MainApp());
 }
 
@@ -30,14 +30,16 @@ class _MyAppState extends State<MainApp> {
   List<Drink> drinks = [];
 
   Future<void> load() async {
-    userProfile = await loadUserProfile();
-    drinks = await loadDrinksList() ?? [];
+    userProfile = await loadItem(storageUserProfileKey, UserProfile.fromMap);
+    drinks = await loadList(storageDrinkListKey, Drink.fromMap);
+    PreferenceModel currentPreferenceModel = Get.find<PreferenceModel>();
+    await loadItem("preferences", currentPreferenceModel.overrideFromMap);
   }
 
   updateUserProfile(UserProfile? userProfile) {
     setState(() {
       this.userProfile = userProfile;
-      saveUserProfile(userProfile);
+      saveItem(storageUserProfileKey, userProfile);
     });
   }
 
@@ -50,8 +52,13 @@ class _MyAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: "DRNK",
+      initialBinding: BindingsBuilder(
+        () {
+          Get.put(PreferenceModel());
+        },
+      ),
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFF181818),
         colorScheme: const ColorScheme.dark(
@@ -65,10 +72,18 @@ class _MyAppState extends State<MainApp> {
         future: loader,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            if (userProfile == null) {
+              return Scaffold(
+                body: Welcome(
+                  updateUserProfile: updateUserProfile,
+                ),
+              );
+            }
             return MainNav(
-                userProfile: userProfile,
-                drinks: drinks,
-                updateUserProfile: updateUserProfile);
+              userProfile: userProfile,
+              drinks: drinks,
+              updateUserProfile: updateUserProfile,
+            );
           } else {
             return const Scaffold(
               body: Center(
@@ -98,6 +113,7 @@ class MainNav extends StatefulWidget {
 }
 
 class MainNavState extends State<MainNav> {
+  List<String> history = [];
   String activeRoute = "/";
   List<Drink> drinks = [];
 
@@ -117,6 +133,7 @@ class MainNavState extends State<MainNav> {
   }
 
   void onNavigate(route) {
+    history.add(route);
     setState(() {
       activeRoute = route;
     });
@@ -134,24 +151,6 @@ class MainNavState extends State<MainNav> {
 
   @override
   Widget build(BuildContext context) {
-    if (activeRoute == "/terms") {
-      return Scaffold(
-        body: Container(
-          child: Column(
-            children: [
-              Text("Terms"),
-            ],
-          ),
-        ),
-      );
-    }
-    if (widget.userProfile == null) {
-      return Scaffold(
-        body: Welcome(
-          updateUserProfile: widget.updateUserProfile,
-        ),
-      );
-    }
     Widget routeWidget;
 
     switch (activeRoute) {
@@ -172,6 +171,9 @@ class MainNavState extends State<MainNav> {
           userProfile: widget.userProfile!,
           updateUserProfile: widget.updateUserProfile,
         );
+        break;
+      case "/terms":
+        routeWidget = Terms();
         break;
       case "/add_drink":
         routeWidget = AddDrink(createDrink: createDrink);

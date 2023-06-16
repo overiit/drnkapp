@@ -1,6 +1,7 @@
 import 'package:drnk/components/buttons/OutlinedTextField.dart';
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/components/dot_pagination.dart';
+import 'package:drnk/components/terms.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
@@ -40,13 +41,25 @@ class _WelcomeState extends State<Welcome> {
   int page = 0;
   final PageController _pageController = PageController();
   bool welcomeForm = false;
+  bool showTerms = false;
 
   // welcomeForm
-  Gender gender = Gender.male;
+  Sex sex = Sex.male;
   Weight weight = Weight(amount: 0, unit: WeightUnit.kg);
 
   @override
   Widget build(BuildContext context) {
+    if (showTerms) {
+      return SafeArea(
+        child: Terms(
+          onClose: () {
+            setState(() {
+              showTerms = false;
+            });
+          },
+        ),
+      );
+    }
     bool formValid = weight.amount > 0;
     Widget activePage = NotificationListener<OverscrollIndicatorNotification>(
       onNotification: (notification) {
@@ -91,11 +104,11 @@ class _WelcomeState extends State<Welcome> {
                 child: Column(
                   children: [
                     WelcomeForm(
-                      gender: gender,
+                      sex: sex,
                       weight: weight,
-                      updateGender: (Gender g) {
+                      updateSex: (Sex g) {
                         setState(() {
-                          gender = g;
+                          sex = g;
                         });
                       },
                       updateWeight: (Weight w) {
@@ -130,10 +143,9 @@ class _WelcomeState extends State<Welcome> {
                             ),
                             recognizer: TapAndPanGestureRecognizer()
                               ..onTapUp = (TapDragUpDetails details) {
-                                // Navigate or perform an action when TOS is clicked. For example:
-                                print("Terms of Service clicked");
-                                // Or to navigate to a new TOS page, you can do something like:
-                                // Navigator.push(context, MaterialPageRoute(builder: (context) => TermsOfServicePage()));
+                                setState(() {
+                                  showTerms = true;
+                                });
                               },
                           ),
                         ],
@@ -177,8 +189,8 @@ class _WelcomeState extends State<Welcome> {
                                   welcomeForm = true;
                                 });
                               } else {
-                                widget.updateUserProfile(UserProfile(
-                                    gender: gender, weight: weight));
+                                widget.updateUserProfile(
+                                    UserProfile(sex: sex, weight: weight));
                               }
                             }
                           : null,
@@ -216,18 +228,20 @@ class _WelcomeState extends State<Welcome> {
 
 class WelcomeForm extends StatelessWidget {
   final Weight weight;
-  final Gender gender;
+  final Sex sex;
+  final bool initialValues;
   final bool title;
 
-  final Function(Gender) updateGender;
+  final Function(Sex) updateSex;
   final Function(Weight) updateWeight;
 
   const WelcomeForm({
     super.key,
-    required this.updateGender,
+    required this.updateSex,
     required this.updateWeight,
-    required this.gender,
+    required this.sex,
     required this.weight,
+    this.initialValues = false,
     this.title = true,
   });
 
@@ -278,7 +292,7 @@ class WelcomeForm extends StatelessWidget {
                   color: Colors.white,
                   fontSize: 15,
                 ),
-                forcedValue: weight.amount.toString(),
+                initialValue: initialValues ? weight.amount.toString() : "",
                 onChanged: (value) {
                   double? amount = double.tryParse(value);
                   if (amount != null) {
@@ -343,14 +357,12 @@ class WelcomeForm extends StatelessWidget {
               child: BetterButton(
                 "Male",
                 color: Colors.transparent,
-                borderColor:
-                    Colors.white.withOpacity(gender == Gender.male ? 1 : .5),
+                borderColor: Colors.white.withOpacity(sex == Sex.male ? 1 : .5),
                 style: TextStyle(
-                  color:
-                      Colors.white.withOpacity(gender == Gender.male ? 1 : .5),
+                  color: Colors.white.withOpacity(sex == Sex.male ? 1 : .5),
                 ),
                 onPressed: () {
-                  updateGender(Gender.male);
+                  updateSex(Sex.male);
                 },
                 padding: EdgeInsets.only(top: 15, bottom: 15),
               ),
@@ -361,13 +373,12 @@ class WelcomeForm extends StatelessWidget {
                 "Female",
                 color: Colors.transparent,
                 borderColor:
-                    Colors.white.withOpacity(gender == Gender.female ? 1 : .5),
+                    Colors.white.withOpacity(sex == Sex.female ? 1 : .5),
                 style: TextStyle(
-                  color: Colors.white
-                      .withOpacity(gender == Gender.female ? 1 : .5),
+                  color: Colors.white.withOpacity(sex == Sex.female ? 1 : .5),
                 ),
                 onPressed: () {
-                  updateGender(Gender.female);
+                  updateSex(Sex.female);
                 },
                 padding: EdgeInsets.only(top: 15, bottom: 15),
               ),

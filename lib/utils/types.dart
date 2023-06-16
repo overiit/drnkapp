@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 
 enum HeaderViewType { alcohol, time }
 
-// Drink Types
 enum DrinkType { beer, wine, spirit, other }
 
 enum LiquidUnit { ml, oz, pt }
 
-class Liquid {
+abstract class Mappable {
+  Map<String, dynamic> toMap();
+}
+
+Drink noDrink = Drink(
+  type: DrinkType.other,
+  liquid: Liquid(amount: 0, unit: LiquidUnit.ml),
+  percentage: 0,
+  timestamp: 0,
+);
+
+class Liquid extends Mappable {
   double amount;
   LiquidUnit unit;
 
@@ -17,34 +27,46 @@ class Liquid {
   String toString() {
     return '$amount${unit.name}';
   }
-}
 
-IconData getDrinkTypeIcon(DrinkType type) {
-  if (type == DrinkType.beer) {
-    return Icons.sports_bar;
-  } else if (type == DrinkType.wine) {
-    return Icons.wine_bar;
-  } else if (type == DrinkType.spirit) {
-    return Icons.local_bar;
-  } else {
-    return Icons.local_drink;
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'amount': amount,
+      'unit': unit.toString(),
+    };
+  }
+
+  static Liquid fromMap(Map<String, dynamic> map) {
+    return Liquid(
+      amount: map['amount'],
+      unit: LiquidUnit.values.firstWhere((e) => e.toString() == map['unit']),
+    );
   }
 }
 
-Drink noDrink = Drink(
-    type: DrinkType.other,
-    liquid: Liquid(amount: 0, unit: LiquidUnit.ml),
-    percentage: 0,
-    timestamp: 0);
-
-class DrinkCalc {
+class DrinkCalc extends Mappable {
   double bacStart;
   double bacDrink;
 
   DrinkCalc({required this.bacStart, required this.bacDrink});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'bacStart': bacStart,
+      'bacDrink': bacDrink,
+    };
+  }
+
+  static DrinkCalc fromMap(Map<String, dynamic> map) {
+    return DrinkCalc(
+      bacStart: map['bacStart'],
+      bacDrink: map['bacDrink'],
+    );
+  }
 }
 
-class Drink {
+class Drink extends Mappable {
   DrinkType type;
   // liquid
   Liquid liquid;
@@ -62,26 +84,95 @@ class Drink {
       required this.timestamp,
       this.calc});
 
+  IconData get icon {
+    switch (type) {
+      case DrinkType.beer:
+        return Icons.sports_bar;
+      case DrinkType.wine:
+        return Icons.wine_bar;
+      case DrinkType.spirit:
+        return Icons.local_bar;
+      default:
+        return Icons.local_drink;
+    }
+  }
+
   @override
-  String toString() {
-    return "Drink: $type, $liquid, $percentage, $timestamp";
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type.toString(),
+      'liquid': liquid.toMap(),
+      'percentage': percentage,
+      'timestamp': timestamp,
+      'calc': calc?.toMap(),
+    };
+  }
+
+  static Drink fromMap(Map<String, dynamic> map) {
+    return Drink(
+      type: DrinkType.values.firstWhere((e) => e.toString() == map['type']),
+      liquid: Liquid.fromMap(map['liquid']),
+      percentage: map['percentage'],
+      timestamp: map['timestamp'],
+      calc: map['calc'] != null ? DrinkCalc.fromMap(map['calc']) : null,
+    );
   }
 }
 
 enum WeightUnit { kg, lb }
 
-class Weight {
+class Weight extends Mappable {
   double amount;
   WeightUnit unit;
 
   Weight({required this.amount, required this.unit});
+
+  @override
+  String toString() {
+    return '$amount${unit.name}';
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'amount': amount,
+      'unit': unit.toString(),
+    };
+  }
+
+  static Weight fromMap(Map<String, dynamic> map) {
+    return Weight(
+      amount: map['amount'],
+      unit: WeightUnit.values.firstWhere((e) => e.toString() == map['unit']),
+    );
+  }
 }
 
-enum Gender { male, female }
+enum Sex { male, female }
 
-class UserProfile {
-  Gender gender;
+class UserProfile extends Mappable {
+  Sex sex;
   Weight weight;
 
-  UserProfile({required this.gender, required this.weight});
+  UserProfile({required this.sex, required this.weight});
+
+  @override
+  String toString() {
+    return "UserProfile: $sex, $weight";
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'sex': sex.toString(),
+      'weight': weight.toMap(),
+    };
+  }
+
+  static UserProfile fromMap(Map<String, dynamic> map) {
+    return UserProfile(
+      sex: Sex.values.firstWhere((e) => e.toString() == map['sex']),
+      weight: Weight.fromMap(map['weight']),
+    );
+  }
 }
