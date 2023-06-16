@@ -29,6 +29,12 @@ class UserProfileModel extends GetxController implements Mappable {
   }
 
   @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveItem(storageUserProfileKey, this);
+    super.update(ids, condition);
+  }
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'weight': _weight.value.toMap(),
@@ -44,12 +50,18 @@ class UserProfileModel extends GetxController implements Mappable {
   }
 }
 
-class DrinksModel extends GetxController implements Mappable {
+class DrinksModel extends GetxController {
   RxList<Drink> drinks = <Drink>[].obs;
 
   Future<void> load() async {
     drinks.value = await loadList(storageDrinkListKey, Drink.fromMap);
     update();
+  }
+
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveList(storageDrinkListKey, drinks.toList());
+    super.update(ids, condition);
   }
 
   void addDrink(Drink drinkInput) {
@@ -113,7 +125,7 @@ class DrinksModel extends GetxController implements Mappable {
     drinks.sort((a, b) => b.timestamp - a.timestamp);
 
     // save the drinks to the database
-    saveList(storageDrinkListKey, drinks);
+    saveList(storageDrinkListKey, drinks.toList());
 
     update();
   }
@@ -139,6 +151,12 @@ class PreferenceModel extends GetxController implements Mappable {
 
   Future<void> load() async {
     await loadItem(storagePreferenceKey, overrideFromMap);
+  }
+
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveItem(storagePreferenceKey, this);
+    super.update(ids, condition);
   }
 
   @override

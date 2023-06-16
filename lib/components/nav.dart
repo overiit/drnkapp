@@ -8,10 +8,9 @@ class Navigation extends StatelessWidget {
   Widget buildNavItem(BuildContext context,
       {required String path, required IconData icon}) {
     String? activeRoute = ModalRoute.of(context)?.settings.name;
-    bool isHome = path == "/";
-    bool active = activeRoute == path ||
-        (isHome && activeRoute == "/") ||
-        (!isHome && (activeRoute ?? "/").startsWith(path));
+    // bool isHome = path == "/";
+    bool active = activeRoute == path;
+    // || (isHome && activeRoute == "/") || (!isHome && (activeRoute ?? "/").startsWith(path))
     return Expanded(
       child: BetterButton(
         "",

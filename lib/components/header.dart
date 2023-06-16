@@ -207,7 +207,7 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
   Widget buildInfo() {
     HealthStatus healthStatus = bacHealthStatus(bac);
     return Container(
-      height: infoHeight > 0 ? infoHeight + 114 : 0,
+      height: infoHeight <= 0 ? 0 : null,
       padding: EdgeInsets.fromLTRB(15, infoHeight, 15, 10),
       child: Column(
         children: [

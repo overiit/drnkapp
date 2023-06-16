@@ -32,7 +32,6 @@ Future<List<T>> loadList<T>(
     List<T> dataList = dataListData
         .map((data) => fromMap(data as Map<String, dynamic>))
         .toList();
-
     return dataList;
   } else {
     return [];

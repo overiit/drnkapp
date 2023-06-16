@@ -1,3 +1,4 @@
+import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 enum HeaderViewType { alcohol, time }
@@ -130,6 +131,10 @@ class Weight extends Mappable {
   @override
   String toString() {
     return '$amount${unit.name}';
+  }
+
+  String toApproxString() {
+    return '${doubleToString(amount)}${unit.name}';
   }
 
   @override

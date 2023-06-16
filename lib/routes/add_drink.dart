@@ -55,14 +55,16 @@ class AddDrinkState extends State<AddDrink> {
     });
     DrinksModel drinksModel = Get.find<DrinksModel>();
     // timestamp is int
-    drinksModel.addDrink(Drink(
-      type: drinkType!,
-      liquid: liquid,
-      percentage: percentage,
-      timestamp: DateTime.now()
-          .subtract(Duration(minutes: (60 * (timeago ?? 0)).toInt()))
-          .millisecondsSinceEpoch,
-    ));
+    drinksModel.addDrink(
+      Drink(
+        type: drinkType!,
+        liquid: liquid,
+        percentage: percentage,
+        timestamp: DateTime.now()
+            .subtract(Duration(minutes: (60 * (timeago ?? 0)).toInt()))
+            .millisecondsSinceEpoch,
+      ),
+    );
     Get.back();
     Get.snackbar(
       'Drink added',

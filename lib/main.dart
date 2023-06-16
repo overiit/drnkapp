@@ -4,6 +4,7 @@ import 'package:drnk/routes/add_drink.dart';
 import 'package:drnk/routes/history.dart';
 import 'package:drnk/routes/home.dart';
 import 'package:drnk/routes/settings.dart';
+import 'package:drnk/routes/settings/ProfileSex.dart';
 import 'package:drnk/routes/settings/ProfileWeight.dart';
 import 'package:drnk/routes/welcome.dart';
 import 'package:drnk/store/stores.dart';
@@ -71,6 +72,9 @@ class MainApp extends StatelessWidget {
             builder =
                 (context) => NavigatedPage(child: ProfileWeightSettings());
             break;
+          case "/settings/profile/sex":
+            builder = (context) => NavigatedPage(child: ProfileSexSettings());
+            break;
           default:
             return null;
         }
@@ -82,7 +86,8 @@ class MainApp extends StatelessWidget {
       },
       onUnknownRoute: (settings) {
         return NoAnimationPageRoute(
-          builder: (context) => NavigatedPage(child: Text("404")),
+          builder: (context) =>
+              NavigatedPage(child: Text("404 Not Found: ${settings.name}")),
           settings: settings,
         );
       },
@@ -114,19 +119,26 @@ class NavigatedPageState extends State<NavigatedPage> {
         );
       } else {
         return SafeArea(
-          child: Scaffold(
-            body: Column(
-              children: [
-                TopNav(
-                  onNavigate: (s) {},
-                ),
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: widget.child,
-                ))
-              ],
+          child: WillPopScope(
+            onWillPop: () async {
+              print("Back button pressed!");
+              Get.back();
+              return false; // prevent Navigator.pop()
+            },
+            child: Scaffold(
+              body: Column(
+                children: [
+                  TopNav(
+                    onNavigate: (s) {},
+                  ),
+                  Expanded(
+                      child: SingleChildScrollView(
+                    child: widget.child,
+                  ))
+                ],
+              ),
+              bottomNavigationBar: Navigation(),
             ),
-            bottomNavigationBar: Navigation(),
           ),
         );
       }

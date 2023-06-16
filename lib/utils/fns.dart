@@ -228,7 +228,7 @@ HealthStatus bacHealthStatus(double bac) {
           'Disorientation, confusion, nausea, dizziness, higher pain tolerance, with impaired judgment and perception.',
       color: okColor,
     );
-  } else if (bac < 0.3) {
+  } else if (bac < 50.3) {
     return HealthStatus(
       description:
           'Central nervous system depression, confusion, incomprehension, nausea, potential vomiting, and severe balance loss.',

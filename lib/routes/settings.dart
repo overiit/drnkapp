@@ -1,6 +1,7 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
+import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,39 +13,32 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
-  late Weight weight;
-  late Sex sex;
-  bool changed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    UserProfileModel userProfileModel = Get.find();
-
-    weight = userProfileModel.weight;
-    sex = userProfileModel.sex;
-  }
-
-  List<Widget> buildMainSettings() {
+  List<Widget> buildMainSettings(UserProfileModel userProfileModel) {
     return [
       buildSettingsTitle("User Profile"),
       buildSettingsContainer(
         children: [
-          buildSettingsItem(
-            icon: Icons.heart_broken_outlined,
-            title: "Your Weight",
-            preview: "115kg",
-            onTap: () {
-              Get.toNamed("/settings/profile/weight");
-            },
+          Obx(
+            () => buildSettingsItem(
+              icon: Icons.scale,
+              title: "Your Weight",
+              preview: userProfileModel.weight.toApproxString(),
+              onTap: () {
+                Get.toNamed("/settings/profile/weight");
+              },
+            ),
           ),
-          buildSettingsItem(
-            icon: Icons.wine_bar,
-            title: "Your Sex",
-            preview: "Male",
-            onTap: () {
-              Get.toNamed("/settings/profile/sex");
-            },
+          Obx(
+            () => buildSettingsItem(
+              icon:
+                  userProfileModel.sex == Sex.male ? Icons.male : Icons.female,
+              title: "Your Sex",
+              preview:
+                  capitalize(userProfileModel.sex.toString().split(".")[1]),
+              onTap: () {
+                Get.toNamed("/settings/profile/sex");
+              },
+            ),
           ),
         ],
       ),
@@ -162,11 +156,13 @@ class SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfileModel userProfileModel = Get.find();
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: buildMainSettings()),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buildMainSettings(userProfileModel),
+      ),
     );
   }
 }

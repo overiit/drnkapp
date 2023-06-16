@@ -13,28 +13,34 @@ class ProfileWeightSettings extends StatefulWidget {
 }
 
 class _WeightSettingsState extends State<ProfileWeightSettings> {
-  bool changed = false;
+  final UserProfileModel userProfileModel = Get.find<UserProfileModel>();
+
+  Weight weight = Weight(amount: 0, unit: WeightUnit.kg);
 
   @override
-  Widget build(BuildContext context) {
-    UserProfileModel userProfileModel = Get.find();
-    return Column(
-      children: [
-        const Row(
-          children: [
-            Text(
-              "How much do you weigh?",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.left,
+  void initState() {
+    super.initState();
+    weight = userProfileModel.weight;
+  }
+
+  List<Widget> buildForm() {
+    return [
+      const Row(
+        children: [
+          Text(
+            "How much do you weigh?",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        Row(
+            textAlign: TextAlign.left,
+          ),
+        ],
+      ),
+      const SizedBox(height: 5),
+      Obx(
+        () => Row(
           children: [
             Expanded(
               child: BetterTextField(
@@ -50,17 +56,13 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
                 initialValue: userProfileModel.weight.amount.toString(),
                 onChanged: (value) {
                   double? amount = double.tryParse(value);
-                  if (amount != null) {
-                    userProfileModel.weight = Weight(
-                      amount: amount,
-                      unit: userProfileModel.weight.unit,
-                    );
-                  } else {
-                    userProfileModel.weight = Weight(
-                      amount: 0,
-                      unit: userProfileModel.weight.unit,
-                    );
-                  }
+                  setState(() {
+                    if (amount != null) {
+                      weight.amount = amount;
+                    } else {
+                      weight.amount = 0;
+                    }
+                  });
                 },
                 padding: 5,
               ),
@@ -76,10 +78,9 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
                     userProfileModel.weight.unit == WeightUnit.kg ? 1 : .5),
               ),
               onPressed: () {
-                userProfileModel.weight = convertWeight(
-                  userProfileModel.weight,
-                  WeightUnit.kg,
-                );
+                setState(() {
+                  weight.unit = WeightUnit.kg;
+                });
               },
               padding: EdgeInsets.only(top: 15, bottom: 15),
             ),
@@ -94,16 +95,46 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
                     userProfileModel.weight.unit == WeightUnit.lb ? 1 : .5),
               ),
               onPressed: () {
-                userProfileModel.weight = convertWeight(
-                  userProfileModel.weight,
-                  WeightUnit.lb,
-                );
+                setState(() {
+                  weight.unit = WeightUnit.lb;
+                });
               },
               padding: EdgeInsets.only(top: 15, bottom: 15),
             )
           ],
         ),
-      ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          Expanded(
+            child: BetterButton(
+              "Save",
+              color: Colors.white,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              onPressed: () {
+                userProfileModel.weight = weight;
+                userProfileModel.update();
+                Get.toNamed("/settings");
+              },
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buildForm(),
+      ),
     );
   }
 }
