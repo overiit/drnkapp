@@ -61,6 +61,15 @@ class DrinkListViewState extends State<DrinkListView> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if (widget.selectable) ...[
+              Container(
+                child: Icon(
+                  selected ? Icons.check_box : Icons.check_box_outline_blank,
+                  color: Colors.white.withOpacity(.6),
+                ),
+              ),
+              const SizedBox(width: 10),
+            ],
             Container(
               height: 34,
               width: 55,
@@ -70,7 +79,7 @@ class DrinkListViewState extends State<DrinkListView> {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Icon(
-                selected ? Icons.check : drink.icon,
+                drink.icon,
                 color: Colors.white,
                 size: 25,
               ),
