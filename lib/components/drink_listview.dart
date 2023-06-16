@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
@@ -7,8 +6,17 @@ import 'package:flutter/material.dart';
 
 class DrinkListView extends StatefulWidget {
   final List<Drink> drinks;
+  final bool selectable;
+  final List<Drink> selectedDrinks;
+  final Function(Drink, bool)? onSelect;
 
-  const DrinkListView({super.key, required this.drinks});
+  const DrinkListView({
+    super.key,
+    required this.drinks,
+    this.selectable = false,
+    this.selectedDrinks = const [],
+    this.onSelect,
+  });
 
   @override
   DrinkListViewState createState() => DrinkListViewState();
@@ -17,7 +25,6 @@ class DrinkListView extends StatefulWidget {
 class DrinkListViewState extends State<DrinkListView> {
   Timer? updateTimer;
 
-  bool isEditing = false;
   List<Drink> drinks = [];
 
   @override
@@ -41,11 +48,12 @@ class DrinkListViewState extends State<DrinkListView> {
   }
 
   Widget buildDrink(Drink drink, {bool isLast = false}) {
+    bool selected = widget.selectable && widget.selectedDrinks.contains(drink);
     return GestureDetector(
-      onLongPress: () {
-        setState(() {
-          isEditing = true;
-        });
+      onTap: () {
+        if (widget.selectable) {
+          widget.onSelect?.call(drink, !selected);
+        }
       },
       child: Container(
         width: double.infinity,
@@ -58,11 +66,11 @@ class DrinkListViewState extends State<DrinkListView> {
               width: 55,
               margin: EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.1),
+                color: Colors.white.withOpacity(selected ? .3 : .1),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Icon(
-                drink.icon,
+                selected ? Icons.check : drink.icon,
                 color: Colors.white,
                 size: 25,
               ),

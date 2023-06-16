@@ -48,6 +48,11 @@ class UserProfileModel extends GetxController implements Mappable {
     update();
     return this;
   }
+
+  void reset() {
+    weight = Weight(amount: 0, unit: WeightUnit.kg);
+    sex = Sex.male;
+  }
 }
 
 class DrinksModel extends GetxController {
@@ -121,6 +126,9 @@ class DrinksModel extends GetxController {
       );
     }
 
+    // calculate for all drinks after the new drink
+    calculateDrinkHistory(drinks, drinkInput.timestamp);
+
     // reverse the drinks for the UI
     drinks.sort((a, b) => b.timestamp - a.timestamp);
 
@@ -130,11 +138,72 @@ class DrinksModel extends GetxController {
     update();
   }
 
+  void calculateDrinkHistory(List<Drink> drinks, int startTimestamp) {
+    UserProfileModel userProfile = Get.find<UserProfileModel>();
+    if (drinks.isEmpty) return;
+
+    if (drinks.length == 1) {
+      final drink = drinks.first;
+      drink.calc = DrinkCalc(
+        bacStart: calculateBacAtStart(userProfile, drink, null),
+        bacDrink: calculateDrinkBac(userProfile, drink),
+      );
+      return;
+    }
+
+    // sort the drinks by timestamp (oldest to newest)
+    drinks.sort((a, b) => a.timestamp - b.timestamp);
+
+    // get the most recent drink that was before the timestamp
+    int firstDrinkIndex =
+        drinks.indexWhere((d) => d.timestamp >= startTimestamp);
+    if (firstDrinkIndex == -1) {
+      firstDrinkIndex = 0;
+    }
+    // calculate the bac for all drinks after the timestamp
+    for (var i = firstDrinkIndex; i < drinks.length; i++) {
+      final drink = drinks[i];
+      final previousDrink = i > 0 ? drinks.elementAt(i - 1) : noDrink;
+      // check if the previous drink is actually the previous drink and throw an error if not
+      if (previousDrink != noDrink &&
+          drink.timestamp < previousDrink.timestamp) {
+        print('Drinks are not sorted correctly');
+      }
+      drink.calc = DrinkCalc(
+        bacStart: calculateBacAtStart(userProfile, drink,
+            previousDrink == noDrink ? null : previousDrink),
+        bacDrink: calculateDrinkBac(userProfile, drink),
+      );
+    }
+  }
+
+  void removeDrinks(List<Drink> drinksToRemove) {
+    drinks.removeWhere((drink) {
+      return drinksToRemove.contains(drink);
+    });
+
+    // calculate for all drinks after the oldest drink (by timestamp)
+    Drink oldestDrink =
+        drinksToRemove.reduce((a, b) => a.timestamp < b.timestamp ? a : b);
+
+    calculateDrinkHistory(drinks, oldestDrink.timestamp);
+
+    // reverse the drinks for the UI
+    drinks.sort((a, b) => b.timestamp - a.timestamp);
+
+    saveList(storageDrinkListKey, drinks.toList());
+    update();
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {
       'drinks': drinks.map((e) => e.toMap()).toList(),
     };
+  }
+
+  void reset() {
+    drinks.value = [];
   }
 }
 
@@ -174,6 +243,10 @@ class PreferenceModel extends GetxController implements Mappable {
     update();
     return this;
   }
+
+  void reset() {
+    liquidUnit = LiquidUnit.ml;
+  }
 }
 
 class DataLoader extends GetxController {
@@ -198,6 +271,13 @@ class DataLoader extends GetxController {
     await Get.find<DrinksModel>().load();
     await Get.find<PreferenceModel>().load();
     loaded = true;
+    update();
+  }
+
+  void reset() {
+    Get.find<UserProfileModel>().reset();
+    Get.find<DrinksModel>().reset();
+    Get.find<PreferenceModel>().reset();
     update();
   }
 }

@@ -102,7 +102,7 @@ String timeSpanDuration(int timeMs, [num Function(num)? numberModifier]) {
     days = numberModifier(days);
     hours = numberModifier(hours % 24);
     minutes = numberModifier(minutes % 60);
-    return '${days}d ${hours}h ${minutes}m';
+    return '${days}d ${hours}h';
   } else if (hours >= 1) {
     hours = numberModifier(hours);
     minutes = numberModifier(minutes % 60);
@@ -228,7 +228,7 @@ HealthStatus bacHealthStatus(double bac) {
           'Disorientation, confusion, nausea, dizziness, higher pain tolerance, with impaired judgment and perception.',
       color: okColor,
     );
-  } else if (bac < 50.3) {
+  } else if (bac < 0.3) {
     return HealthStatus(
       description:
           'Central nervous system depression, confusion, incomprehension, nausea, potential vomiting, and severe balance loss.',

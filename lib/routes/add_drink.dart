@@ -66,14 +66,6 @@ class AddDrinkState extends State<AddDrink> {
       ),
     );
     Get.back();
-    Get.snackbar(
-      'Drink added',
-      'You have added a drink',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      duration: Duration(seconds: 2),
-    );
   }
 
   @override
@@ -248,7 +240,7 @@ class AddDrinkState extends State<AddDrink> {
     return Text(
       title,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.white.withOpacity(.75),
         fontWeight: FontWeight.w700,
         letterSpacing: -.5,
       ),

@@ -1,4 +1,8 @@
-import 'package:drnk/components/buttons/betterbutton.dart';
+import 'package:drnk/components/section_title.dart';
+import 'package:drnk/components/settings/preference_liquids.dart';
+import 'package:drnk/components/settings/profile_sex.dart';
+import 'package:drnk/components/settings/profile_weight.dart';
+import 'package:drnk/components/settings/reset.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
@@ -13,92 +17,78 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
-  List<Widget> buildMainSettings(UserProfileModel userProfileModel) {
+  List<Widget> buildMainSettings() {
     return [
-      buildSettingsTitle("User Profile"),
+      SectionTitle(title: "User Profile"),
       buildSettingsContainer(
         children: [
-          Obx(
-            () => buildSettingsItem(
+          GetBuilder<UserProfileModel>(
+            builder: (userProfileModel) => buildSettingsItem(
               icon: Icons.scale,
               title: "Your Weight",
               preview: userProfileModel.weight.toApproxString(),
               onTap: () {
-                Get.toNamed("/settings/profile/weight");
+                openWidgetPopup(context, ProfileWeightSettings());
               },
             ),
           ),
-          Obx(
-            () => buildSettingsItem(
+          GetBuilder<UserProfileModel>(
+            builder: (userProfileModel) => buildSettingsItem(
               icon:
                   userProfileModel.sex == Sex.male ? Icons.male : Icons.female,
               title: "Your Sex",
               preview:
                   capitalize(userProfileModel.sex.toString().split(".")[1]),
               onTap: () {
-                Get.toNamed("/settings/profile/sex");
+                openWidgetPopup(context, ProfileSexSettings());
               },
             ),
           ),
         ],
       ),
-      buildSettingsTitle("Preferences"),
+      SectionTitle(title: "Preferences"),
       buildSettingsContainer(
         children: [
-          buildSettingsItem(
-            icon: Icons.water_drop_outlined,
-            title: "Liquids",
-            preview: "ML",
-            onTap: () {
-              Get.toNamed("/settings/preferences/liquids");
-            },
+          GetBuilder<PreferenceModel>(
+            builder: (preferenceModel) => buildSettingsItem(
+              icon: Icons.water_drop_outlined,
+              title: "Liquid Unit",
+              preview: preferenceModel.liquidUnit.toString().split(".")[1],
+              onTap: () {
+                openWidgetPopup(context, PreferenceLiquids());
+              },
+            ),
           ),
         ],
       ),
-      buildSettingsTitle("Legal"),
+      SectionTitle(title: "Legal"),
       buildSettingsContainer(
         children: [
           buildSettingsItem(
             icon: Icons.gavel_outlined,
-            title: "Terms",
+            title: "Terms & Conditions",
+            isLink: true,
             onTap: () {
               Get.toNamed("/terms");
             },
           ),
         ],
       ),
-      buildSettingsTitle("Other"),
+      SectionTitle(title: "Other"),
       buildSettingsContainer(
         children: [
           buildSettingsItem(
             icon: Icons.delete_outline,
             title: "Reset app",
+            color: Colors.redAccent,
+            isLink: true,
             onTap: () {
-              Get.toNamed("/reset");
+              openWidgetPopup(context, ResetApp());
             },
           ),
         ],
       ),
     ];
-  }
-
-  Widget buildSettingsTitle(String title) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Row(
-        children: [
-          Text(
-            title.toUpperCase(),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 2,
-              color: Colors.white.withOpacity(.5),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget buildSettingsContainer({required List<Widget> children}) {
@@ -115,6 +105,8 @@ class SettingsState extends State<Settings> {
   Widget buildSettingsItem({
     required IconData icon,
     required String title,
+    Color color = Colors.white,
+    bool isLink = false,
     String? preview,
     required Function() onTap,
   }) {
@@ -131,37 +123,60 @@ class SettingsState extends State<Settings> {
           children: [
             Icon(
               icon,
+              color: color,
             ),
             const SizedBox(
               width: 10,
             ),
             Text(
               title,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w400, color: color),
             ),
-            Spacer(),
+            const Spacer(),
             Text(
               preview ?? "",
               style: TextStyle(color: Colors.white.withOpacity(.65)),
             ),
-            const SizedBox(width: 5),
-            Icon(Icons.chevron_right),
+            if (isLink) ...[
+              const SizedBox(width: 5),
+              Icon(Icons.chevron_right, color: color)
+            ],
           ],
         ),
       ),
     );
   }
 
+  void openWidgetPopup(BuildContext context, Widget child) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserProfileModel userProfileModel = Get.find();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buildMainSettings(userProfileModel),
+        children: buildMainSettings(),
       ),
     );
   }

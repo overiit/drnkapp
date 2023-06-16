@@ -1,11 +1,13 @@
 import 'package:drnk/components/nav.dart';
+import 'package:drnk/components/settings/reset.dart';
+import 'package:drnk/components/terms.dart';
 import 'package:drnk/components/topnav.dart';
 import 'package:drnk/routes/add_drink.dart';
 import 'package:drnk/routes/history.dart';
 import 'package:drnk/routes/home.dart';
 import 'package:drnk/routes/settings.dart';
-import 'package:drnk/routes/settings/ProfileSex.dart';
-import 'package:drnk/routes/settings/ProfileWeight.dart';
+import 'package:drnk/components/settings/profile_sex.dart';
+import 'package:drnk/components/settings/profile_weight.dart';
 import 'package:drnk/routes/welcome.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:flutter/material.dart';
@@ -63,17 +65,13 @@ class MainApp extends StatelessWidget {
             builder = (context) => NavigatedPage(child: History());
             break;
           case "/settings":
-            builder = (context) => NavigatedPage(child: Settings());
+            builder = (context) => const NavigatedPage(child: Settings());
             break;
           case "/add_drink":
             builder = (context) => NavigatedPage(child: AddDrink());
             break;
-          case "/settings/profile/weight":
-            builder =
-                (context) => NavigatedPage(child: ProfileWeightSettings());
-            break;
-          case "/settings/profile/sex":
-            builder = (context) => NavigatedPage(child: ProfileSexSettings());
+          case "/terms":
+            builder = (context) => const NavigatedPage(child: Terms());
             break;
           default:
             return null;
@@ -121,8 +119,7 @@ class NavigatedPageState extends State<NavigatedPage> {
         return SafeArea(
           child: WillPopScope(
             onWillPop: () async {
-              print("Back button pressed!");
-              Get.back();
+              Get.back(closeOverlays: true);
               return false; // prevent Navigator.pop()
             },
             child: Scaffold(
@@ -132,12 +129,13 @@ class NavigatedPageState extends State<NavigatedPage> {
                     onNavigate: (s) {},
                   ),
                   Expanded(
-                      child: SingleChildScrollView(
-                    child: widget.child,
-                  ))
+                    child: SingleChildScrollView(
+                      child: widget.child,
+                    ),
+                  ),
                 ],
               ),
-              bottomNavigationBar: Navigation(),
+              bottomNavigationBar: const Navigation(),
             ),
           ),
         );

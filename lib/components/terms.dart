@@ -13,7 +13,7 @@ class Terms extends StatelessWidget {
     // scrollable column of text
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

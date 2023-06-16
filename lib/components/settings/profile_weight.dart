@@ -1,7 +1,6 @@
 import 'package:drnk/components/buttons/OutlinedTextField.dart';
 import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/store/stores.dart';
-import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +52,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
                   color: Colors.white,
                   fontSize: 15,
                 ),
-                initialValue: userProfileModel.weight.amount.toString(),
+                initialValue: doubleToString(userProfileModel.weight.amount),
                 onChanged: (value) {
                   double? amount = double.tryParse(value);
                   setState(() {
@@ -118,7 +117,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
               onPressed: () {
                 userProfileModel.weight = weight;
                 userProfileModel.update();
-                Get.toNamed("/settings");
+                Get.back();
               },
             ),
           ),
@@ -130,7 +129,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: buildForm(),
