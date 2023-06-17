@@ -1,8 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+bool? isDebug;
+
 String getDomain() {
-  if (kReleaseMode) {
+  if (isDebug == null) {
+    isDebug = false;
+    assert(() {
+      isDebug = true;
+      return true;
+    }());
+  }
+  if (isDebug == false) {
     return 'https://cfwapi.drnk.app';
   } else {
     return 'http://cfwapi-dev.drnk.app';
@@ -12,6 +21,7 @@ String getDomain() {
 class ApiService {
   static Future<bool> sendTracking(String type) async {
     final String endpoint = '/api/track?type=$type';
+    print(getDomain());
     try {
       final response = await http.post(
         Uri.parse(getDomain() + endpoint),
