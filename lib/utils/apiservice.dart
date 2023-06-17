@@ -21,7 +21,6 @@ String getDomain() {
 class ApiService {
   static Future<bool> sendTracking(String type) async {
     final String endpoint = '/api/track?type=$type';
-    print(getDomain());
     try {
       final response = await http.post(
         Uri.parse(getDomain() + endpoint),
