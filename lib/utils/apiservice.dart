@@ -1,15 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-String domain = const bool.fromEnvironment('dart.vm.product')
-    ? "https://cfwapi.drnk.app"
-    : "http://cfwapi-dev.drnk.app";
+String getDomain() {
+  if (kReleaseMode) {
+    return 'https://cfwapi.drnk.app';
+  } else {
+    return 'http://cfwapi-dev.drnk.app';
+  }
+}
 
 class ApiService {
   static Future<bool> sendTracking(String type) async {
     final String endpoint = '/api/track?type=$type';
     try {
       final response = await http.post(
-        Uri.parse(domain + endpoint),
+        Uri.parse(getDomain() + endpoint),
         headers: {
           "Content-Type": "application/json",
         },
@@ -23,7 +28,7 @@ class ApiService {
     final String endpoint = '/api/feedback?type=$feedbackType';
     try {
       final response = await http.post(
-        Uri.parse(domain + endpoint),
+        Uri.parse(getDomain() + endpoint),
         headers: {
           "Content-Type": "text/plain",
         },
