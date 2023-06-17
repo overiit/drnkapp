@@ -1,13 +1,10 @@
 import 'package:drnk/components/nav.dart';
-import 'package:drnk/components/settings/reset.dart';
 import 'package:drnk/components/terms.dart';
 import 'package:drnk/components/topnav.dart';
 import 'package:drnk/routes/add_drink.dart';
 import 'package:drnk/routes/history.dart';
 import 'package:drnk/routes/home.dart';
 import 'package:drnk/routes/settings.dart';
-import 'package:drnk/components/settings/profile_sex.dart';
-import 'package:drnk/components/settings/profile_weight.dart';
 import 'package:drnk/routes/welcome.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:flutter/material.dart';
@@ -125,9 +122,7 @@ class NavigatedPageState extends State<NavigatedPage> {
             child: Scaffold(
               body: Column(
                 children: [
-                  TopNav(
-                    onNavigate: (s) {},
-                  ),
+                  TopNav(),
                   Expanded(
                     child: SingleChildScrollView(
                       child: widget.child,
@@ -153,6 +148,38 @@ class NoAnimationPageRoute<T> extends PageRouteBuilder<T> {
             return builder(context);
           },
           transitionDuration: const Duration(milliseconds: 0),
+        );
+
+  final WidgetBuilder builder;
+}
+
+class SlideInOutPageRoute<T> extends PageRouteBuilder<T> {
+  SlideInOutPageRoute({required this.builder, required RouteSettings settings})
+      : super(
+          settings: settings,
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return builder(context);
+          },
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset(1.0, 0.0),
+                end: Offset(0.0, 0.0),
+              ).animate(animation),
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: Offset(0.0, 0.0),
+                  end: Offset(-1.0, 0.0),
+                ).animate(secondaryAnimation),
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 300),
         );
 
   final WidgetBuilder builder;

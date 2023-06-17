@@ -16,8 +16,8 @@ class ProfileSexSettings extends StatelessWidget {
           .map(
             (sex) => ListTile(
               title: Text(capitalize(sex.toString().split(".")[1])),
-              leading: Icon(
-                  userProfileModel.sex == Sex.male ? Icons.male : Icons.female),
+              leading:
+                  Icon(userProfileModel.sex == sex ? Icons.male : Icons.female),
               trailing:
                   userProfileModel.sex == sex ? const Icon(Icons.check) : null,
               onTap: () {

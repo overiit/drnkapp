@@ -22,16 +22,16 @@ List pagesData = [
         "Track drinks and alcohol levels effortlessly — our app offers the perfect tool for balanced, enjoyable nights out.",
   },
   {
-    "preTitle": "Stir up your night with",
-    "title": "Exciting Recipes",
+    "preTitle": "Stay informed about your",
+    "title": "Alcohol Levels",
     "description":
-        "Discover a variety of delightful drink recipes, adding excitment and creativity to your nights out or cozy gatherings at home.",
+        "Get an approximate calculation of your blood alcohol concentration (BAC) based on your weight, sex, and drinks. Keep tabs on your sobriety and potential health effects.",
   },
   {
-    "preTitle": "Connect with your",
-    "title": "Drinking Buddies",
+    "preTitle": "Be aware of your",
+    "title": "Time to Sober",
     "description":
-        "Team up with friends to track progress and share unforgettable drinking experiences together.",
+        "Learn when it's time to take a break or call it a night. DRNK helps you estimate the time it takes to sober up based on your current alcohol consumption.",
   }
 ];
 

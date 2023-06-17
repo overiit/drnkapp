@@ -237,7 +237,7 @@ class HistoryState extends State<History> {
               const SizedBox(height: 10),
               BetterButton(
                 "Add Drink",
-                onPressed: () => Get.toNamed("/add"),
+                onPressed: () => Get.toNamed("/add_drink"),
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 color: Colors.white.withOpacity(.1),
                 style: const TextStyle(

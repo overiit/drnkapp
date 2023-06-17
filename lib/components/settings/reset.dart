@@ -27,6 +27,7 @@ class ResetApp extends StatelessWidget {
                     DataLoader dataLoader = Get.find<DataLoader>();
                     dataLoader.reset();
                     Navigator.of(context).pop(true);
+                    Get.toNamed("/");
                   },
                   color: Colors.redAccent.withOpacity(.75),
                   style: TextStyle(color: Colors.white),
