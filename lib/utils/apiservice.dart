@@ -4,18 +4,7 @@ import 'package:http/http.dart' as http;
 bool? isDebug;
 
 String getDomain() {
-  if (isDebug == null) {
-    isDebug = false;
-    assert(() {
-      isDebug = true;
-      return true;
-    }());
-  }
-  if (isDebug == false) {
-    return 'https://cfwapi.drnk.app';
-  } else {
-    return 'http://cfwapi-dev.drnk.app';
-  }
+  return 'https://cfwapi.drnk.app';
 }
 
 class ApiService {
