@@ -21,14 +21,14 @@ class TopNav extends StatelessWidget {
               style: TextStyle(fontSize: 42, fontWeight: FontWeight.w900),
             ),
           ),
-          Spacer(),
-          IconButton(
-            onPressed: () {
-              Get.toNamed("/add_drink");
-            },
-            icon: const Icon(Icons.add),
-            splashRadius: 20,
-          ),
+          const Spacer(),
+          // IconButton(
+          //   onPressed: () {
+          //     Get.toNamed("/add_drink");
+          //   },
+          //   icon: const Icon(Icons.add),
+          //   splashRadius: 20,
+          // ),
           IconButton(
             onPressed: () {
               String? activeRoute = ModalRoute.of(context)?.settings.name;
