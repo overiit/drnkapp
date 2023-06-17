@@ -1,18 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-bool? isDebug;
-
-String getDomain() {
-  return 'https://cfwapi.drnk.app';
-}
+String domain = "https://cfwapi.drnk.app";
 
 class ApiService {
   static Future<bool> sendTracking(String type) async {
     final String endpoint = '/api/track?type=$type';
     try {
       final response = await http.post(
-        Uri.parse(getDomain() + endpoint),
+        Uri.parse(domain + endpoint),
         headers: {
           "Content-Type": "application/json",
         },
@@ -26,7 +22,7 @@ class ApiService {
     final String endpoint = '/api/feedback?type=$feedbackType';
     try {
       final response = await http.post(
-        Uri.parse(getDomain() + endpoint),
+        Uri.parse(domain + endpoint),
         headers: {
           "Content-Type": "text/plain",
         },
