@@ -3,6 +3,7 @@ import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/components/dot_pagination.dart';
 import 'package:drnk/components/terms.dart';
 import 'package:drnk/store/stores.dart';
+import 'package:drnk/utils/apiservice.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:drnk/utils/utils.dart';
@@ -192,6 +193,9 @@ class _WelcomeState extends State<Welcome> {
                                 userProfile.sex = sex;
                                 userProfile.weight = weight;
                                 userProfile.update();
+
+                                // Tracking
+                                ApiService.sendTracking("SETUP_COMPLETE");
                               }
                             }
                           : null,

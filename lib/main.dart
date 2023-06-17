@@ -59,7 +59,7 @@ class MainApp extends StatelessWidget {
             builder = (context) => NavigatedPage(child: Home());
             break;
           case "/history":
-            builder = (context) => NavigatedPage(child: History());
+            builder = (context) => const NavigatedPage(child: History());
             break;
           case "/settings":
             builder = (context) => const NavigatedPage(child: Settings());
@@ -122,7 +122,7 @@ class NavigatedPageState extends State<NavigatedPage> {
             child: Scaffold(
               body: Column(
                 children: [
-                  TopNav(),
+                  const TopNav(),
                   Expanded(
                     child: SingleChildScrollView(
                       child: widget.child,

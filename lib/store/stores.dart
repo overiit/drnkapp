@@ -1,4 +1,5 @@
 import 'package:drnk/store/storage.dart';
+import 'package:drnk/utils/apiservice.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:get/get.dart';
@@ -136,6 +137,9 @@ class DrinksModel extends GetxController {
     saveList(storageDrinkListKey, drinks.toList());
 
     update();
+
+    // Tracking
+    ApiService.sendTracking("ADD_DRINK");
   }
 
   void calculateDrinkHistory(List<Drink> drinks, int startTimestamp) {
@@ -193,6 +197,9 @@ class DrinksModel extends GetxController {
 
     saveList(storageDrinkListKey, drinks.toList());
     update();
+
+    // Tracking
+    ApiService.sendTracking("DELETE_DRINK");
   }
 
   @override
