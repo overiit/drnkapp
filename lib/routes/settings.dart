@@ -152,6 +152,7 @@ class SettingsState extends State<Settings> {
       context: context,
       showDragHandle: true,
       useSafeArea: true,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15),

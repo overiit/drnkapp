@@ -3,6 +3,7 @@ import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
+import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,7 +18,7 @@ class AddDrinkState extends State<AddDrink> {
   TextEditingController amountController = TextEditingController();
   double percentage = 0;
   TextEditingController percentageController = TextEditingController();
-  int timeago = 0;
+  int timeago = 0; // minutes
   TextEditingController timeagoController = TextEditingController();
 
   bool saving = false;
@@ -33,14 +34,14 @@ class AddDrinkState extends State<AddDrink> {
       percentage = double.tryParse(percentageController.text) ?? 0;
     });
     timeagoController.addListener(() {
-      int? parsed = int.tryParse(timeagoController.text);
+      double? parsed = double.tryParse(timeagoController.text);
       if (parsed == null) {
         timeago = 0;
       } else {
         if (parsed.isNaN) {
           timeago = 0;
         } else {
-          timeago = parsed;
+          timeago = (parsed * 60).toInt();
         }
       }
     });
@@ -61,7 +62,7 @@ class AddDrinkState extends State<AddDrink> {
         liquid: liquid,
         percentage: percentage,
         timestamp: DateTime.now()
-            .subtract(Duration(minutes: (60 * (timeago ?? 0)).toInt()))
+            .subtract(Duration(minutes: timeago))
             .millisecondsSinceEpoch,
       ),
     );
@@ -162,7 +163,7 @@ class AddDrinkState extends State<AddDrink> {
         hintText: "Drink Amount",
         isNumber: true,
         controller: amountController,
-        initialValue: liquid.amount.toString(),
+        initialValue: doubleToString(liquid.amount),
         onChanged: (amount) {
           setState(() {
             liquid.amount = double.tryParse(amount) ?? 0;
@@ -180,7 +181,7 @@ class AddDrinkState extends State<AddDrink> {
         hintText: "Percentage",
         isNumber: true,
         controller: percentageController,
-        initialValue: percentage.toString(),
+        initialValue: doubleToString(percentage),
         onChanged: (percentage) {
           setState(() {
             this.percentage = double.tryParse(percentage) ?? 0;
@@ -198,10 +199,10 @@ class AddDrinkState extends State<AddDrink> {
         hintText: "Hours ago",
         isNumber: true,
         controller: timeagoController,
-        initialValue: timeago.toString(),
+        initialValue: doubleToString(timeago.toDouble() / 60),
         onChanged: (timeago) {
           setState(() {
-            this.timeago = int.tryParse(timeago) ?? 0;
+            this.timeago = (int.tryParse(timeago) ?? 0) * 60;
           });
         },
       ),
@@ -219,8 +220,7 @@ class AddDrinkState extends State<AddDrink> {
         borderColor: Colors.white.withOpacity(isActive ? 1 : .5),
         onPressed: () {
           setState(() {
-            timeago = time;
-            timeagoController.text = time.toString();
+            timeagoController.text = doubleToString(time.toDouble() / 60);
           });
         },
       ),
@@ -231,7 +231,8 @@ class AddDrinkState extends State<AddDrink> {
     return Row(
       children: [
         buildTimeAgoUnit(0, "Now"),
-        buildTimeAgoUnit(1, "1h"),
+        buildTimeAgoUnit(30, "30m"),
+        buildTimeAgoUnit(60, "1h"),
       ],
     );
   }
@@ -316,10 +317,7 @@ class AddDrinkState extends State<AddDrink> {
               ],
             ),
           ]);
-
-          if (timeago != null) {
-            children.add(buildSubmitButton());
-          }
+          children.add(buildSubmitButton());
         }
       }
     }
