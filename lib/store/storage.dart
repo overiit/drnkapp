@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 String storageUserProfileKey = "userProfile";
 String storageDrinkListKey = "drinkList";
 String storagePreferenceKey = "preference";
+String storageEventListKey = "eventList";
+String storageLimitKey = "limit";
 
 Future<void> saveList<T extends Mappable>(String key, List<T>? list) async {
   if (list == null) {

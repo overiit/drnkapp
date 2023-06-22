@@ -202,13 +202,6 @@ class DrinksModel extends GetxController {
     ApiService.sendTracking("DELETE_DRINK");
   }
 
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      'drinks': drinks.map((e) => e.toMap()).toList(),
-    };
-  }
-
   void reset() {
     drinks.value = [];
   }
@@ -256,6 +249,42 @@ class PreferenceModel extends GetxController implements Mappable {
   }
 }
 
+class EventsModel extends GetxController {
+  final RxList<Event> events = <Event>[].obs;
+
+  Future<void> load() async {
+    events.value = await loadList(storageEventListKey, Event.fromMap);
+  }
+
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveList(storageEventListKey, events);
+    super.update(ids, condition);
+  }
+
+  void reset() {
+    events.value = [];
+  }
+}
+
+class LimitModel extends GetxController {
+  final Rx<Limitation?> limitation = null.obs;
+
+  Future<void> load() async {
+    await loadItem(storageLimitKey, Limitation.fromMap);
+  }
+
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveItem(storageLimitKey, limitation.value);
+    super.update(ids, condition);
+  }
+
+  void reset() {
+    limitation.value = null;
+  }
+}
+
 class DataLoader extends GetxController {
   final RxBool _loaded = false.obs;
 
@@ -277,6 +306,8 @@ class DataLoader extends GetxController {
     await Get.find<UserProfileModel>().load();
     await Get.find<DrinksModel>().load();
     await Get.find<PreferenceModel>().load();
+    await Get.find<EventsModel>().load();
+    await Get.find<LimitModel>().load();
     loaded = true;
     update();
   }
@@ -285,6 +316,8 @@ class DataLoader extends GetxController {
     Get.find<UserProfileModel>().reset();
     Get.find<DrinksModel>().reset();
     Get.find<PreferenceModel>().reset();
+    Get.find<EventsModel>().reset();
+    Get.find<LimitModel>().reset();
     update();
   }
 }

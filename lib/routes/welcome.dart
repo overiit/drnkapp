@@ -171,7 +171,7 @@ class _WelcomeState extends State<Welcome> {
               child: Row(
                 children: [
                   Expanded(
-                    child: BetterButton(
+                    child: BetterTextButton(
                       (page < pagesData.length) ? "Continue" : "Get Started",
                       onPressed: (page < pagesData.length || formValid)
                           ? () {
@@ -310,7 +310,7 @@ class WelcomeForm extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            BetterButton(
+            BetterTextButton(
               "KG",
               color: Colors.transparent,
               borderColor: Colors.white
@@ -325,7 +325,7 @@ class WelcomeForm extends StatelessWidget {
               padding: EdgeInsets.only(top: 15, bottom: 15),
             ),
             const SizedBox(width: 10),
-            BetterButton(
+            BetterTextButton(
               "LB",
               color: Colors.transparent,
               borderColor: Colors.white
@@ -359,7 +359,7 @@ class WelcomeForm extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: BetterButton(
+              child: BetterTextButton(
                 "Male",
                 color: Colors.transparent,
                 borderColor: Colors.white.withOpacity(sex == Sex.male ? 1 : .5),
@@ -374,7 +374,7 @@ class WelcomeForm extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             Expanded(
-              child: BetterButton(
+              child: BetterTextButton(
                 "Female",
                 color: Colors.transparent,
                 borderColor:

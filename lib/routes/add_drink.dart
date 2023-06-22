@@ -140,7 +140,7 @@ class AddDrinkState extends State<AddDrink> {
     bool isActive = liquid.unit == unit;
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-      child: BetterButton(
+      child: BetterTextButton(
         unit.name.toUpperCase(),
         color: Colors.transparent,
         style: TextStyle(color: Colors.white.withOpacity(isActive ? 1 : .5)),
@@ -213,7 +213,7 @@ class AddDrinkState extends State<AddDrink> {
     bool isActive = timeago == time;
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-      child: BetterButton(
+      child: BetterTextButton(
         label,
         color: Colors.transparent,
         style: TextStyle(color: Colors.white.withOpacity(isActive ? 1 : .5)),
@@ -261,7 +261,7 @@ class AddDrinkState extends State<AddDrink> {
           end: Alignment.centerRight,
         ),
       ),
-      child: BetterButton(
+      child: BetterTextButton(
         !saving ? "ADD DRINK" : "ADDING...",
         color: Colors.white.withOpacity(!saving ? 1 : .2),
         style: const TextStyle(

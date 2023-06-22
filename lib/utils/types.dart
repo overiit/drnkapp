@@ -7,6 +7,30 @@ enum DrinkType { beer, wine, spirit, other }
 
 enum LiquidUnit { ml, oz, pt }
 
+enum LimitType { timeToSober, alcoholLimit }
+
+class Limitation extends Mappable {
+  LimitType type;
+  double value;
+
+  Limitation({required this.type, this.value = 0.0});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type.toString(),
+      'value': value,
+    };
+  }
+
+  static Limitation fromMap(Map<String, dynamic> map) {
+    return Limitation(
+      type: LimitType.values.firstWhere((e) => e.toString() == map['type']),
+      value: map['value'],
+    );
+  }
+}
+
 abstract class Mappable {
   Map<String, dynamic> toMap();
 }
@@ -78,12 +102,16 @@ class Drink extends Mappable {
 
   DrinkCalc? calc;
 
-  Drink(
-      {required this.type,
-      required this.liquid,
-      required this.percentage,
-      required this.timestamp,
-      this.calc});
+  int? eventID;
+
+  Drink({
+    required this.type,
+    required this.liquid,
+    required this.percentage,
+    required this.timestamp,
+    this.eventID,
+    this.calc,
+  });
 
   IconData get icon {
     switch (type) {
@@ -106,6 +134,7 @@ class Drink extends Mappable {
       'percentage': percentage,
       'timestamp': timestamp,
       'calc': calc?.toMap(),
+      'eventID': eventID,
     };
   }
 
@@ -116,6 +145,47 @@ class Drink extends Mappable {
       percentage: map['percentage'],
       timestamp: map['timestamp'],
       calc: map['calc'] != null ? DrinkCalc.fromMap(map['calc']) : null,
+      eventID: map['eventID'],
+    );
+  }
+}
+
+class Event extends Mappable {
+  int id;
+  String name;
+  int timestampStart;
+  int? timestampEnd;
+
+  int get duration {
+    if (timestampEnd == null) {
+      return DateTime.now().millisecondsSinceEpoch;
+    }
+    return timestampEnd! - timestampStart;
+  }
+
+  Event({
+    required this.id,
+    required this.name,
+    required this.timestampStart,
+    required this.timestampEnd,
+  });
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'timestampStart': timestampStart,
+      'timestampEnd': timestampEnd,
+    };
+  }
+
+  static Event fromMap(Map<String, dynamic> map) {
+    return Event(
+      id: map['id'],
+      name: map['name'],
+      timestampStart: map['timestampStart'],
+      timestampEnd: map['timestampEnd'],
     );
   }
 }

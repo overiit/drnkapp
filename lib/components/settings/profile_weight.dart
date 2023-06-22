@@ -67,7 +67,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
               ),
             ),
             const SizedBox(width: 10),
-            BetterButton(
+            BetterTextButton(
               "KG",
               color: Colors.transparent,
               borderColor: Colors.white.withOpacity(
@@ -84,7 +84,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
               padding: EdgeInsets.only(top: 15, bottom: 15),
             ),
             const SizedBox(width: 10),
-            BetterButton(
+            BetterTextButton(
               "LB",
               color: Colors.transparent,
               borderColor: Colors.white.withOpacity(
@@ -107,7 +107,7 @@ class _WeightSettingsState extends State<ProfileWeightSettings> {
       Row(
         children: [
           Expanded(
-            child: BetterButton(
+            child: BetterTextButton(
               "Save",
               color: Colors.white,
               style: const TextStyle(

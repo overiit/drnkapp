@@ -21,7 +21,7 @@ class ResetApp extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: BetterButton(
+                child: BetterTextButton(
                   "Reset",
                   onPressed: () {
                     DataLoader dataLoader = Get.find<DataLoader>();
@@ -35,7 +35,7 @@ class ResetApp extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: BetterButton(
+                child: BetterTextButton(
                   "Cancel",
                   onPressed: () => Navigator.of(context).pop(),
                   color: Colors.white.withOpacity(.1),

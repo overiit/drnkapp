@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BetterButton extends StatelessWidget {
+class BetterTextButton extends StatelessWidget {
   final String text;
   final Function()? onPressed;
   final TextStyle? style;
@@ -10,7 +10,7 @@ class BetterButton extends StatelessWidget {
   final Color? overlayColor;
   final EdgeInsets padding;
 
-  const BetterButton(
+  const BetterTextButton(
     this.text, {
     super.key,
     this.onPressed,

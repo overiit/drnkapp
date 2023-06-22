@@ -10,7 +10,7 @@ class Navigation extends StatelessWidget {
     String? activeRoute = ModalRoute.of(context)?.settings.name;
     bool active = activeRoute == path;
     return Expanded(
-      child: BetterButton(
+      child: BetterTextButton(
         "",
         onPressed: () {
           Get.toNamed(path);

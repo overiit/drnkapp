@@ -37,6 +37,8 @@ class MainApp extends StatelessWidget {
           Get.put(PreferenceModel());
           Get.put(UserProfileModel());
           Get.put(DrinksModel());
+          Get.put(EventsModel());
+          Get.put(LimitModel());
           // ...
           Get.put(DataLoader());
         },

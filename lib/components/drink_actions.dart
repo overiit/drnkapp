@@ -10,7 +10,7 @@ class DrinkActions extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: BetterButton(
+            child: BetterTextButton(
               "ADD DRINK",
               onPressed: () {
                 Get.toNamed("/add_drink");
@@ -27,7 +27,7 @@ class DrinkActions extends StatelessWidget {
             width: 15,
           ),
           Expanded(
-            child: BetterButton(
+            child: BetterTextButton(
               "VIEW DRINKS",
               onPressed: () {
                 Get.toNamed("/history");

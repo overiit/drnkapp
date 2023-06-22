@@ -43,29 +43,36 @@ class DrinkSummary extends StatelessWidget {
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          stops: [0, 1],
+                          stops: [0, .85],
                         ),
-                        // color: Colors.red
                       ),
                     ),
                   ),
+                  Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: BetterTextButton(
+                              "VIEW ALL",
+                              onPressed: () {
+                                Get.toNamed("/history");
+                              },
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(.75),
+                                fontWeight: FontWeight.w800,
+                              ),
+                              overlayColor: Colors.white.withOpacity(.1),
+                              color: Colors.transparent,
+                              padding: const EdgeInsets.all(0),
+                            ),
+                          ),
+                        ],
+                      ))
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: BetterButton("VIEW ALL", onPressed: () {
-                      Get.toNamed("/history");
-                    },
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(.75),
-                          fontWeight: FontWeight.w800,
-                        ),
-                        color: Colors.white.withOpacity(.1),
-                        padding: EdgeInsets.all(0)),
-                  ),
-                ],
-              )
             ] else ...[
               const SizedBox(height: 20),
               Row(

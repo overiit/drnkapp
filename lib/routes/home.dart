@@ -1,9 +1,8 @@
 import 'package:drnk/components/drink_actions.dart';
 import 'package:drnk/components/drink_summary.dart';
 import 'package:drnk/components/header.dart';
-import 'package:drnk/store/stores.dart';
+import 'package:drnk/components/quick_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,7 +14,12 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      children: [Header(), DrinkActions(), DrinkSummary()],
+      children: [
+        Header(),
+        DrinkActions(),
+        DrinkSummary(),
+        const QuickActions(),
+      ],
     );
   }
 }

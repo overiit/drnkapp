@@ -125,7 +125,7 @@ class HistoryState extends State<History> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: BetterButton(
+                child: BetterTextButton(
                   "Delete",
                   onPressed: () {
                     DrinksModel drinksModel = Get.find<DrinksModel>();
@@ -140,7 +140,7 @@ class HistoryState extends State<History> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: BetterButton(
+                child: BetterTextButton(
                   "Cancel",
                   onPressed: () => Navigator.of(context).pop(),
                   color: Colors.white.withOpacity(.1),
@@ -171,7 +171,7 @@ class HistoryState extends State<History> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  BetterButton(
+                  BetterTextButton(
                     editing ? "Done" : "Edit",
                     onPressed: () {
                       setState(() {
@@ -236,7 +236,7 @@ class HistoryState extends State<History> {
                 ),
               ),
               const SizedBox(height: 10),
-              BetterButton(
+              BetterTextButton(
                 "Add Drink",
                 onPressed: () => Get.toNamed("/add_drink"),
                 padding: EdgeInsets.symmetric(horizontal: 15),
