@@ -45,22 +45,25 @@ Weight convertWeight(Weight from, WeightUnit to) {
 Drink? defaultDrinkValues(DrinkType type) {
   if (type == DrinkType.beer) {
     return Drink(
-        type: type,
-        liquid: Liquid(amount: 300, unit: LiquidUnit.ml),
-        percentage: 5,
-        timestamp: 0);
+      type: type,
+      liquid: Liquid(amount: 300, unit: LiquidUnit.ml),
+      percentage: 5,
+      timestamp: 0,
+    );
   } else if (type == DrinkType.wine) {
     return Drink(
-        type: type,
-        liquid: Liquid(amount: 150, unit: LiquidUnit.ml),
-        percentage: 12,
-        timestamp: 0);
+      type: type,
+      liquid: Liquid(amount: 150, unit: LiquidUnit.ml),
+      percentage: 12,
+      timestamp: 0,
+    );
   } else if (type == DrinkType.spirit) {
     return Drink(
-        type: type,
-        liquid: Liquid(amount: 50, unit: LiquidUnit.ml),
-        percentage: 40,
-        timestamp: 0);
+      type: type,
+      liquid: Liquid(amount: 25, unit: LiquidUnit.ml),
+      percentage: 40,
+      timestamp: 0,
+    );
   } else {
     return null;
   }
@@ -79,7 +82,10 @@ String timeAgo({required int time, bool short = false}) {
   String m = short
       ? ' min${minutes > 1 ? 's' : ''}'
       : ' minute${minutes > 1 ? 's' : ''}';
-  if (days > 0) {
+  if (days == 1) {
+    return "Yesterday";
+  }
+  if (days > 1) {
     return '${days}${d} ago';
   } else if (hours > 0) {
     return '${hours}${h} ago';
@@ -97,7 +103,8 @@ String timeSpanDuration(int timeMs, [num Function(num)? numberModifier]) {
   num minutes = seconds / 60;
   num hours = minutes / 60;
   num days = hours / 24;
-
+  num years = hours / 24 / 365;
+  if (years >= 1) {}
   if (days >= 1) {
     days = numberModifier(days);
     hours = numberModifier(hours % 24);
@@ -161,7 +168,7 @@ double calculateDrinkBac(UserProfileModel userProfile, Drink drink) {
 // calculate the current bac (based on the most recent drink)
 double calculateBac(Drink drink) {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
-  final bac = drink.calc!.bacStart + drink.calc!.bacDrink;
+  final bac = (drink.calc?.bacStart ?? 0) + (drink.calc?.bacDrink ?? 0);
   final currentBac = bac - bacDecrease(timestamp - drink.timestamp);
   if (currentBac <= 0) {
     return 0;
@@ -182,6 +189,12 @@ double calculateDrunkTime(List<Drink> drinks) {
 int calculateTimeUntilSober(Drink drink) {
   final currentBac = calculateBac(drink);
   final timeUntilSober = (currentBac / 0.015) * 60.0 * 60.0 * 1000.0;
+
+  return timeUntilSober.toInt();
+}
+
+int calculateTimeUntilSoberByBac(double bac) {
+  final timeUntilSober = (bac / 0.015) * 60.0 * 60.0 * 1000.0;
 
   return timeUntilSober.toInt();
 }

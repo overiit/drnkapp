@@ -1,11 +1,19 @@
+import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class QuickActions extends StatelessWidget {
+class QuickActions extends StatefulWidget {
   const QuickActions({super.key});
 
+  LimitType limitType = LimitType.alcoholLimit;
+
+  @override
+  QuickActionState createState() => QuickActionState();
+}
+
+class QuickActionState extends State<QuickActions> {
   Widget quickAction({required Function() onTap, required Widget child}) {
     return Expanded(
       child: InkWell(
@@ -23,10 +31,84 @@ class QuickActions extends StatelessWidget {
     );
   }
 
-  Widget limitation() {
+  Widget buildLimitationType({required LimitType type, required String label}) {
+    bool isActive = limitType == type;
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+        child: BetterTextButton(
+          label,
+          color: Colors.transparent,
+          style: TextStyle(color: Colors.white.withOpacity(isActive ? 1 : .5)),
+          borderColor: Colors.white.withOpacity(isActive ? 1 : .5),
+          onPressed: () {
+            setState(() {
+              limitType = type;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  List<Widget> buildLimitationForm(BuildContext context) {
+    return [
+      Text(
+        "How would you like to get alerted?",
+        style: TextStyle(
+          color: Colors.white.withOpacity(.75),
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      const SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          buildLimitationType(
+            type: LimitType.alcoholLimit,
+            label: "Alcohol Level",
+          ),
+          buildLimitationType(
+            type: LimitType.timeToSober,
+            label: "Time Until Sober",
+          )
+        ],
+      ),
+      if (limitType == LimitType.timeToSober)
+        Row(
+          children: [
+            BetterTextButton(
+              "asd",
+              onPressed: () {
+                showTimePicker(
+                  context: context,
+                  initialTime: const TimeOfDay(hour: 0, minute: 0),
+                );
+              },
+            ),
+          ],
+        )
+    ];
+  }
+
+  Widget configureLimitation(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: buildLimitationForm(context),
+      ),
+    );
+  }
+
+  Widget buildLimitation(BuildContext context) {
     final LimitModel limitModel = Get.find<LimitModel>();
     return quickAction(
-      onTap: () {},
+      onTap: () {
+        openWidgetPopup(context, configureLimitation(context));
+      },
       child: Obx(
         () {
           return Column(
@@ -34,7 +116,7 @@ class QuickActions extends StatelessWidget {
             children: [
               if (limitModel.limitation.value == null) ...[
                 Text(
-                  "Set up a",
+                  "Create a",
                   style: TextStyle(
                     color: Colors.white.withOpacity(.5),
                     fontSize: 12,
@@ -151,6 +233,31 @@ class QuickActions extends StatelessWidget {
     );
   }
 
+  void openWidgetPopup(BuildContext context, Widget child) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -160,7 +267,7 @@ class QuickActions extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            limitation(),
+            buildLimitation(context),
             const SizedBox(width: 15),
             currentEvent(),
           ],

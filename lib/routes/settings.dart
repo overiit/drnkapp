@@ -19,7 +19,7 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   List<Widget> buildMainSettings() {
     return [
-      SectionTitle(title: "User Profile"),
+      const SectionTitle(title: "User Profile"),
       buildSettingsContainer(
         children: [
           GetBuilder<UserProfileModel>(
@@ -40,7 +40,7 @@ class SettingsState extends State<Settings> {
               preview:
                   capitalize(userProfileModel.sex.toString().split(".")[1]),
               onTap: () {
-                openWidgetPopup(context, ProfileSexSettings());
+                openWidgetPopup(context, const ProfileSexSettings());
               },
             ),
           ),

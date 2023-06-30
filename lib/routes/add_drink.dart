@@ -18,7 +18,7 @@ class AddDrinkState extends State<AddDrink> {
   TextEditingController amountController = TextEditingController();
   double percentage = 0;
   TextEditingController percentageController = TextEditingController();
-  int timeago = 0; // minutes
+  double timeago = 0; // minutes
   TextEditingController timeagoController = TextEditingController();
 
   bool saving = false;
@@ -41,7 +41,7 @@ class AddDrinkState extends State<AddDrink> {
         if (parsed.isNaN) {
           timeago = 0;
         } else {
-          timeago = (parsed * 60).toInt();
+          timeago = parsed * 60;
         }
       }
     });
@@ -62,7 +62,7 @@ class AddDrinkState extends State<AddDrink> {
         liquid: liquid,
         percentage: percentage,
         timestamp: DateTime.now()
-            .subtract(Duration(minutes: timeago))
+            .subtract(Duration(minutes: timeago.toInt()))
             .millisecondsSinceEpoch,
       ),
     );
@@ -80,7 +80,7 @@ class AddDrinkState extends State<AddDrink> {
   Widget buildDrinkType(DrinkType type) {
     bool isActive = drinkType == type;
     return Container(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: EdgeInsets.only(bottom: isActive ? 5 : 15),
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -139,7 +139,7 @@ class AddDrinkState extends State<AddDrink> {
   Widget buildLiquidUnit(LiquidUnit unit, String label) {
     bool isActive = liquid.unit == unit;
     return Padding(
-      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
       child: BetterTextButton(
         unit.name.toUpperCase(),
         color: Colors.transparent,
@@ -202,7 +202,7 @@ class AddDrinkState extends State<AddDrink> {
         initialValue: doubleToString(timeago.toDouble() / 60),
         onChanged: (timeago) {
           setState(() {
-            this.timeago = (int.tryParse(timeago) ?? 0) * 60;
+            this.timeago = (double.tryParse(timeago) ?? 0) * 60;
           });
         },
       ),
@@ -244,6 +244,55 @@ class AddDrinkState extends State<AddDrink> {
         color: Colors.white.withOpacity(.75),
         fontWeight: FontWeight.w700,
         letterSpacing: -.5,
+      ),
+    );
+  }
+
+  Widget buildEstimate() {
+    final UserProfileModel profileModel = Get.find();
+    Drink currentDrink = Drink(
+      type: drinkType ?? DrinkType.beer,
+      liquid: liquid,
+      percentage: percentage,
+      timestamp: DateTime.now()
+          .subtract(Duration(minutes: timeago.toInt()))
+          .millisecondsSinceEpoch,
+      calc: DrinkCalc(bacDrink: 0, bacStart: 0),
+    );
+    double timeProcessed =
+        bacDecrease(Duration(minutes: timeago.toInt()).inMilliseconds);
+    double bac = calculateDrinkBac(
+          profileModel,
+          currentDrink,
+        ) -
+        timeProcessed;
+    if (bac < 0) bac = 0;
+    String currentBac = doubleToString(double.parse((bac).toStringAsFixed(3)));
+    int timeToSoberNumber = calculateTimeUntilSoberByBac(bac);
+    String timeToSober = timeSpanDuration(timeToSoberNumber);
+
+    return Container(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: BetterTextButton(
+              "Alcohol Level +$currentBac%",
+              color: Colors.white.withOpacity(.1),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: BetterTextButton(
+              "Time To Sober: +$timeToSober",
+              color: Colors.white.withOpacity(.1),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -317,6 +366,7 @@ class AddDrinkState extends State<AddDrink> {
               ],
             ),
           ]);
+          children.add(buildEstimate());
           children.add(buildSubmitButton());
         }
       }

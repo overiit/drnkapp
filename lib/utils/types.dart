@@ -12,8 +12,13 @@ enum LimitType { timeToSober, alcoholLimit }
 class Limitation extends Mappable {
   LimitType type;
   double value;
+  TimeOfDay timeOfDay;
 
-  Limitation({required this.type, this.value = 0.0});
+  Limitation({
+    required this.type,
+    this.value = 0.0,
+    this.timeOfDay = const TimeOfDay(hour: 0, minute: 0),
+  });
 
   @override
   Map<String, dynamic> toMap() {

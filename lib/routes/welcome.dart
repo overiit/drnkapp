@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Welcome extends StatefulWidget {
+  const Welcome({super.key});
+
   @override
   _WelcomeState createState() => _WelcomeState();
 }
@@ -396,13 +398,14 @@ class WelcomeForm extends StatelessWidget {
 }
 
 class WelcomeBackground extends StatelessWidget {
-  Widget WelcomeImage(
-      {double height = 200,
-      required String path,
-      bool topSide = false,
-      bool leftSide = false,
-      bool rightSide = false,
-      bool bottomSide = false}) {
+  Widget WelcomeImage({
+    double height = 200,
+    required String path,
+    bool topSide = false,
+    bool leftSide = false,
+    bool rightSide = false,
+    bool bottomSide = false,
+  }) {
     return SizedBox(
       height: height,
       width: double.infinity,

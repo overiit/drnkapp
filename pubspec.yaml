@@ -1,7 +1,7 @@
 name: drnk
 description: Track your alcohol consumption with ease. Featuring intuitive BAC calculations and time-to-sober estimates.
 publish_to: "none"
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ">=3.0.2 <4.0.0"
