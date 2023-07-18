@@ -8,6 +8,7 @@ String storageDrinkListKey = "drinkList";
 String storagePreferenceKey = "preference";
 String storageEventListKey = "eventList";
 String storageLimitKey = "limit";
+String storageMarkedDrinkTimesKey = "markedDrinkTimes";
 
 Future<void> saveList<T extends Mappable>(String key, List<T>? list) async {
   if (list == null) {

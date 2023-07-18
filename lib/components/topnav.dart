@@ -22,28 +22,20 @@ class TopNav extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          // IconButton(
-          //   onPressed: () {
-          //     Get.toNamed("/add_drink");
-          //   },
-          //   icon: const Icon(Icons.add),
-          //   splashRadius: 20,
-          // ),
           IconButton(
             onPressed: () {
-              String? activeRoute = ModalRoute.of(context)?.settings.name;
-              bool active = activeRoute == "/settings";
-              if (active) {
-                Get.back();
-              } else {
-                Get.toNamed("/settings");
-              }
+              Get.toNamed("/add_drink");
             },
-            icon: const Icon(
-              Icons.tune_rounded,
-            ),
+            icon: const Icon(Icons.add),
             splashRadius: 20,
-          )
+          ),
+          // IconButton(
+          //   onPressed: () {
+          //     Get.toNamed("/insights");
+          //   },
+          //   icon: const Icon(Icons.insights_outlined),
+          //   splashRadius: 20,
+          // ),
         ],
       ),
     );

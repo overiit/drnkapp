@@ -4,6 +4,44 @@ import "package:flutter/material.dart";
 
 import "./types.dart";
 
+void openWidgetPopup(BuildContext context, Widget child) {
+  showModalBottomSheet(
+    context: context,
+    showDragHandle: true,
+    useSafeArea: true,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15),
+        topRight: Radius.circular(15),
+      ),
+    ),
+    builder: (BuildContext context) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
+// lastWhereOrNull
+extension IterableExtension<T> on Iterable<T> {
+  T? lastWhereOrNull(bool Function(T) test) {
+    T? last;
+    for (final element in this) {
+      if (test(element)) {
+        last = element;
+      }
+    }
+    return last;
+  }
+}
+
 Liquid convertLiquid(Liquid from, LiquidUnit to) {
   double amount = from.amount;
   if (from.unit == LiquidUnit.ml) {
@@ -42,25 +80,87 @@ Weight convertWeight(Weight from, WeightUnit to) {
   return Weight(amount: amount, unit: to);
 }
 
+List<double> defaultDrinkPercentages(DrinkType type) {
+  if (type == DrinkType.beer) {
+    return [4.5, 5, 6.5];
+  } else if (type == DrinkType.wine) {
+    return [12, 14, 16];
+  } else if (type == DrinkType.spirit) {
+    return [40, 45, 50];
+  } else {
+    return [];
+  }
+}
+
+List<Liquid> defaultDrinkLiquids(DrinkType type) {
+  if (type == DrinkType.beer) {
+    return [
+      Liquid(amount: 330, unit: LiquidUnit.ml),
+      Liquid(amount: 500, unit: LiquidUnit.ml),
+      Liquid(amount: 1, unit: LiquidUnit.pt),
+    ];
+  } else if (type == DrinkType.wine) {
+    return [
+      Liquid(amount: 150, unit: LiquidUnit.ml),
+      Liquid(amount: 250, unit: LiquidUnit.ml),
+    ];
+  } else if (type == DrinkType.spirit) {
+    return [
+      Liquid(amount: 25, unit: LiquidUnit.ml),
+      Liquid(amount: 50, unit: LiquidUnit.ml),
+    ];
+  } else {
+    return [];
+  }
+}
+
+Liquid defaultLiquidUnitValue(DrinkType type, LiquidUnit unit) {
+  if (type == DrinkType.beer) {
+    if (unit == LiquidUnit.pt) {
+      return Liquid(amount: 1, unit: LiquidUnit.pt);
+    } else if (unit == LiquidUnit.ml) {
+      return Liquid(amount: 330, unit: LiquidUnit.ml);
+    } else if (unit == LiquidUnit.oz) {
+      return Liquid(amount: 12, unit: LiquidUnit.oz);
+    }
+  } else if (type == DrinkType.wine) {
+    if (unit == LiquidUnit.ml) {
+      return Liquid(amount: 150, unit: LiquidUnit.ml);
+    } else if (unit == LiquidUnit.oz) {
+      return Liquid(amount: 5, unit: LiquidUnit.oz);
+    }
+  } else if (type == DrinkType.spirit) {
+    if (unit == LiquidUnit.ml) {
+      return Liquid(amount: 25, unit: LiquidUnit.ml);
+    } else if (unit == LiquidUnit.oz) {
+      return Liquid(amount: 1, unit: LiquidUnit.oz);
+    }
+  }
+  return Liquid(amount: 1, unit: unit);
+}
+
 Drink? defaultDrinkValues(DrinkType type) {
   if (type == DrinkType.beer) {
     return Drink(
+      name: "Beer",
       type: type,
-      liquid: Liquid(amount: 300, unit: LiquidUnit.ml),
-      percentage: 5,
+      liquid: defaultLiquidUnitValue(type, LiquidUnit.ml),
+      percentage: 4.5,
       timestamp: 0,
     );
   } else if (type == DrinkType.wine) {
     return Drink(
+      name: "Wine",
       type: type,
-      liquid: Liquid(amount: 150, unit: LiquidUnit.ml),
+      liquid: defaultLiquidUnitValue(type, LiquidUnit.ml),
       percentage: 12,
       timestamp: 0,
     );
   } else if (type == DrinkType.spirit) {
     return Drink(
+      name: "Spirit",
       type: type,
-      liquid: Liquid(amount: 25, unit: LiquidUnit.ml),
+      liquid: defaultLiquidUnitValue(type, LiquidUnit.ml),
       percentage: 40,
       timestamp: 0,
     );

@@ -12,6 +12,7 @@ dependencies:
   shared_preferences: ^2.0.12
   get: ^4.6.1
   http: ^0.13.3
+  time_machine: ^0.9.16
 
 dev_dependencies:
   flutter_test:

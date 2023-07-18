@@ -46,8 +46,8 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFF181818),
         colorScheme: const ColorScheme.dark(
-          primary: Colors.black,
-          secondary: Colors.blue,
+          primary: Colors.white,
+          secondary: Colors.white,
         ),
         fontFamily: 'Inter',
         fontFamilyFallback: const ['Roboto'],

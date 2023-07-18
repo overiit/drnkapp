@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:drnk/components/dot_pagination.dart';
 import 'package:drnk/store/stores.dart';
 import 'package:drnk/utils/fns.dart';
-import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
@@ -192,8 +191,8 @@ class HeaderState extends State<Header> with TickerProviderStateMixin {
                 bottom: 0,
                 child: Icon(
                   infoHeight > 42
-                      ? Icons.keyboard_arrow_down
-                      : Icons.keyboard_arrow_up,
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   color: Colors.black.withOpacity(.5),
                 ),
               ),

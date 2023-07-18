@@ -8,6 +8,7 @@ class DrinkListView extends StatefulWidget {
   final List<Drink> drinks;
   final bool selectable;
   final List<Drink> selectedDrinks;
+  final Widget Function(Drink)? action;
   final Function(Drink, bool)? onSelect;
 
   const DrinkListView({
@@ -15,6 +16,7 @@ class DrinkListView extends StatefulWidget {
     required this.drinks,
     this.selectable = false,
     this.selectedDrinks = const [],
+    this.action,
     this.onSelect,
   });
 
@@ -49,6 +51,10 @@ class DrinkListViewState extends State<DrinkListView> {
 
   Widget buildDrink(Drink drink, {bool isLast = false}) {
     bool selected = widget.selectable && widget.selectedDrinks.contains(drink);
+    Widget? action;
+    if (widget.action != null) {
+      action = widget.action!(drink);
+    }
     return GestureDetector(
       onTap: () {
         if (widget.selectable) {
@@ -89,7 +95,7 @@ class DrinkListViewState extends State<DrinkListView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    capitalize(drink.type.name),
+                    capitalize(drink.name),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -107,17 +113,20 @@ class DrinkListViewState extends State<DrinkListView> {
                 ],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(left: 10, right: 10),
-              child: Text(
-                "+ ${(drink.calc?.bacDrink ?? 0).toStringAsFixed(3)}%",
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
+            if (action != null)
+              action
+            else
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  "+ ${(drink.calc?.bacDrink ?? 0).toStringAsFixed(3)}%",
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

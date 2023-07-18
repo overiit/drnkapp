@@ -1,4 +1,5 @@
 import 'package:drnk/components/buttons/betterbutton.dart';
+import 'package:drnk/utils/fns.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,9 +29,10 @@ class DrinkActions extends StatelessWidget {
           ),
           Expanded(
             child: BetterTextButton(
-              "VIEW DRINKS",
+              "MARK TIME",
               onPressed: () {
-                Get.toNamed("/history");
+                // open popup
+                openWidgetPopup(context, Text("MARK TIME"));
               },
               color: Colors.white.withOpacity(.1),
               overlayColor: Colors.white.withOpacity(.1),

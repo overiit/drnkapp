@@ -1,5 +1,6 @@
 import 'package:drnk/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 enum HeaderViewType { alcohol, time }
 
@@ -16,8 +17,8 @@ class Limitation extends Mappable {
 
   Limitation({
     required this.type,
-    this.value = 0.0,
-    this.timeOfDay = const TimeOfDay(hour: 0, minute: 0),
+    this.value = 0.1,
+    this.timeOfDay = const TimeOfDay(hour: 8, minute: 0),
   });
 
   @override
@@ -41,6 +42,7 @@ abstract class Mappable {
 }
 
 Drink noDrink = Drink(
+  name: 'No drink',
   type: DrinkType.other,
   liquid: Liquid(amount: 0, unit: LiquidUnit.ml),
   percentage: 0,
@@ -52,6 +54,10 @@ class Liquid extends Mappable {
   LiquidUnit unit;
 
   Liquid({required this.amount, required this.unit});
+
+  clone() {
+    return Liquid(amount: amount, unit: unit);
+  }
 
   @override
   String toString() {
@@ -96,7 +102,30 @@ class DrinkCalc extends Mappable {
   }
 }
 
+class MarkedTime extends Mappable {
+  int timestamp;
+  String? note;
+
+  MarkedTime({required this.timestamp, this.note});
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'timestamp': timestamp,
+      'note': note,
+    };
+  }
+
+  static MarkedTime fromMap(Map<String, dynamic> map) {
+    return MarkedTime(
+      timestamp: map['timestamp'],
+      note: map['note'],
+    );
+  }
+}
+
 class Drink extends Mappable {
+  String name;
   DrinkType type;
   // liquid
   Liquid liquid;
@@ -107,16 +136,24 @@ class Drink extends Mappable {
 
   DrinkCalc? calc;
 
-  int? eventID;
-
   Drink({
-    required this.type,
+    required this.name,
     required this.liquid,
     required this.percentage,
     required this.timestamp,
-    this.eventID,
+    this.type = DrinkType.other,
+    // ^ only these should be initialized
     this.calc,
   });
+
+  clone() {
+    return Drink(
+      name: name,
+      liquid: liquid.clone(),
+      percentage: percentage,
+      timestamp: timestamp,
+    );
+  }
 
   IconData get icon {
     switch (type) {
@@ -134,23 +171,27 @@ class Drink extends Mappable {
   @override
   Map<String, dynamic> toMap() {
     return {
+      'name': name,
       'type': type.toString(),
       'liquid': liquid.toMap(),
       'percentage': percentage,
       'timestamp': timestamp,
       'calc': calc?.toMap(),
-      'eventID': eventID,
     };
   }
 
   static Drink fromMap(Map<String, dynamic> map) {
+    DrinkType type = DrinkType.values.firstWhere(
+        (e) => e.toString() == map['type'],
+        orElse: () => DrinkType.other);
     return Drink(
-      type: DrinkType.values.firstWhere((e) => e.toString() == map['type']),
+      name: map['name'] ??
+          (type != DrinkType.other ? type.name.capitalizeFirst : 'Drink'),
+      type: type,
       liquid: Liquid.fromMap(map['liquid']),
       percentage: map['percentage'],
       timestamp: map['timestamp'],
       calc: map['calc'] != null ? DrinkCalc.fromMap(map['calc']) : null,
-      eventID: map['eventID'],
     );
   }
 }
@@ -172,7 +213,7 @@ class Event extends Mappable {
     required this.id,
     required this.name,
     required this.timestampStart,
-    required this.timestampEnd,
+    this.timestampEnd,
   });
 
   @override

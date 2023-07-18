@@ -2,6 +2,7 @@ import 'package:drnk/store/storage.dart';
 import 'package:drnk/utils/apiservice.dart';
 import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserProfileModel extends GetxController implements Mappable {
@@ -56,6 +57,26 @@ class UserProfileModel extends GetxController implements Mappable {
   }
 }
 
+class MarkedDrinkTimesModel extends GetxController {
+  final RxList<MarkedTime> _lastMarkedDrinkTimes = <MarkedTime>[].obs;
+
+  Future<void> load() async {
+    _lastMarkedDrinkTimes.value =
+        await loadList(storageMarkedDrinkTimesKey, MarkedTime.fromMap);
+    update();
+  }
+
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    saveList(storageMarkedDrinkTimesKey, _lastMarkedDrinkTimes.toList());
+    super.update(ids, condition);
+  }
+
+  void reset() {
+    _lastMarkedDrinkTimes.value = [];
+  }
+}
+
 class DrinksModel extends GetxController {
   RxList<Drink> drinks = <Drink>[].obs;
 
@@ -78,10 +99,9 @@ class DrinksModel extends GetxController {
     // if there is a drink with the exact same drank_at, add 1 millisecond to the new drink
     var done = false;
     while (!done) {
-      final sameTimeDrink = drinks.firstWhere(
-          (d) => d.timestamp == drinkInput.timestamp,
-          orElse: () => noDrink);
-      if (sameTimeDrink != noDrink) {
+      Drink? sameTimeDrink =
+          drinks.firstWhereOrNull((d) => d.timestamp == drinkInput.timestamp);
+      if (sameTimeDrink != null) {
         drinkInput.timestamp++;
       } else {
         done = true;
@@ -89,15 +109,20 @@ class DrinksModel extends GetxController {
     }
 
     // get the most drink that was before the new drink
-    final previousDrink = drinks.lastWhere(
-        (d) => d.timestamp < drinkInput.timestamp,
-        orElse: () => noDrink);
+    Drink? previousDrink =
+        drinks.lastWhereOrNull((d) => d.timestamp < drinkInput.timestamp);
 
     // calculate the bac for the new drink
     drinkInput.calc = DrinkCalc(
-      bacStart: calculateBacAtStart(userProfile, drinkInput,
-          previousDrink == noDrink ? null : previousDrink),
-      bacDrink: calculateDrinkBac(userProfile, drinkInput),
+      bacStart: calculateBacAtStart(
+        userProfile,
+        drinkInput,
+        previousDrink == noDrink ? null : previousDrink,
+      ),
+      bacDrink: calculateDrinkBac(
+        userProfile,
+        drinkInput,
+      ),
     );
 
     // add the new drink to the drinks array at the index of the most recent drink
@@ -132,9 +157,6 @@ class DrinksModel extends GetxController {
 
     // reverse the drinks for the UI
     drinks.sort((a, b) => b.timestamp - a.timestamp);
-
-    // save the drinks to the database
-    saveList(storageDrinkListKey, drinks.toList());
 
     update();
 
@@ -209,6 +231,7 @@ class DrinksModel extends GetxController {
 
 class PreferenceModel extends GetxController implements Mappable {
   final Rx<LiquidUnit> _liquidUnit = LiquidUnit.ml.obs;
+  final Rx<bool> _tracking = RxBool(true);
 
   LiquidUnit get liquidUnit {
     return _liquidUnit.value;
@@ -216,6 +239,15 @@ class PreferenceModel extends GetxController implements Mappable {
 
   set liquidUnit(LiquidUnit liquidUnit) {
     _liquidUnit.value = liquidUnit;
+  }
+
+  bool get trackingEnabled {
+    return _tracking.value;
+  }
+
+  set trackingEnabled(bool enabled) {
+    _tracking.value = enabled;
+    update();
   }
 
   Future<void> load() async {
@@ -232,6 +264,7 @@ class PreferenceModel extends GetxController implements Mappable {
   Map<String, dynamic> toMap() {
     return {
       'liquidUnit': liquidUnit.toString(),
+      'tracking': trackingEnabled,
     };
   }
 
@@ -240,6 +273,7 @@ class PreferenceModel extends GetxController implements Mappable {
       (element) => element.toString() == map['liquidUnit'],
       orElse: () => LiquidUnit.ml,
     );
+    trackingEnabled = map['tracking'] ?? true;
     update();
     return this;
   }
@@ -250,10 +284,60 @@ class PreferenceModel extends GetxController implements Mappable {
 }
 
 class EventsModel extends GetxController {
-  final RxList<Event> events = <Event>[].obs;
+  final RxList<Event> _events = <Event>[].obs;
+
+  List<Event> get events {
+    return _events;
+  }
+
+  set events(List<Event> events) {
+    _events.value = events;
+  }
 
   Future<void> load() async {
-    events.value = await loadList(storageEventListKey, Event.fromMap);
+    events = await loadList(storageEventListKey, Event.fromMap);
+  }
+
+  Event createEvent({String? name}) {
+    Event event = Event(
+      id: DateTime.now().millisecondsSinceEpoch,
+      name: name ?? "Event #${events.length + 1}",
+      timestampStart: DateTime.now().millisecondsSinceEpoch,
+    );
+    events.add(event);
+    update();
+
+    // Tracking
+    ApiService.sendTracking("ADD_EVENT");
+    return event;
+  }
+
+  Event endEvent(Event event) {
+    event.timestampEnd = DateTime.now().millisecondsSinceEpoch;
+    DrinksModel drinksModel = Get.find<DrinksModel>();
+    int drinksInEvent = drinksModel.drinks.where((drink) {
+      return drink.timestamp >= event.timestampStart &&
+          drink.timestamp <= event.timestampEnd!;
+    }).length;
+
+    if (drinksInEvent > 0) {
+      events = [...events];
+    } else {
+      events.remove(event);
+      // alert (Event not saved, as no drinks were added)
+      Get.snackbar(
+        "Event not saved",
+        "No drinks were added to this event",
+        backgroundColor: Colors.redAccent.withOpacity(.3),
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 3),
+      );
+    }
+    update();
+
+    // Tracking
+    ApiService.sendTracking("END_EVENT");
+    return event;
   }
 
   @override
@@ -263,12 +347,26 @@ class EventsModel extends GetxController {
   }
 
   void reset() {
-    events.value = [];
+    events = [];
   }
 }
 
 class LimitModel extends GetxController {
-  final Rx<Limitation?> limitation = null.obs;
+  final Rx<Limitation?> _limitation = Rx<Limitation?>(null);
+
+  Limitation? get limitation {
+    return _limitation.value;
+  }
+
+  set limitation(Limitation? limitation) {
+    final LimitType? prevLimitType = _limitation.value?.type;
+    _limitation.value = limitation;
+    if (limitation != null) {
+      ApiService.sendTracking("LIMIT_SET_${limitation.type.name}");
+    } else {
+      ApiService.sendTracking("LIMIT_REMOVED_${prevLimitType?.name}");
+    }
+  }
 
   Future<void> load() async {
     await loadItem(storageLimitKey, Limitation.fromMap);
@@ -276,12 +374,12 @@ class LimitModel extends GetxController {
 
   @override
   void update([List<Object>? ids, bool condition = true]) {
-    saveItem(storageLimitKey, limitation.value);
+    saveItem(storageLimitKey, limitation);
     super.update(ids, condition);
   }
 
   void reset() {
-    limitation.value = null;
+    limitation = null;
   }
 }
 
@@ -308,6 +406,7 @@ class DataLoader extends GetxController {
     await Get.find<PreferenceModel>().load();
     await Get.find<EventsModel>().load();
     await Get.find<LimitModel>().load();
+    await Get.find<MarkedDrinkTimesModel>().load();
     loaded = true;
     update();
   }
@@ -318,6 +417,7 @@ class DataLoader extends GetxController {
     Get.find<PreferenceModel>().reset();
     Get.find<EventsModel>().reset();
     Get.find<LimitModel>().reset();
+    Get.find<MarkedDrinkTimesModel>().reset();
     update();
   }
 }

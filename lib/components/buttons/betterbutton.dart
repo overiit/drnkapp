@@ -4,7 +4,8 @@ class BetterTextButton extends StatelessWidget {
   final String text;
   final Function()? onPressed;
   final TextStyle? style;
-  final Color color;
+  final Color? color;
+  final IconData? icon;
   final Widget? child;
   final Color borderColor;
   final Color? overlayColor;
@@ -13,11 +14,10 @@ class BetterTextButton extends StatelessWidget {
   const BetterTextButton(
     this.text, {
     super.key,
+    this.icon,
     this.onPressed,
-    this.color = Colors.white,
-    this.style = const TextStyle(
-      color: Colors.black,
-    ),
+    this.color,
+    this.style,
     this.borderColor = Colors.transparent,
     this.overlayColor,
     this.padding = const EdgeInsets.all(0),
@@ -26,6 +26,10 @@ class BetterTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme scheme = Theme.of(context).colorScheme;
+    Color color = this.color ?? scheme.primary;
+    TextStyle style = this.style ??
+        TextStyle(color: scheme.secondary, fontWeight: FontWeight.w900);
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
@@ -41,10 +45,28 @@ class BetterTextButton extends StatelessWidget {
         ),
       ),
       child: child ??
-          Text(
-            text,
-            style: style,
-          ),
+          (icon != null
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      color: style.color,
+                      size: 18,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      text,
+                      style: style,
+                    )
+                  ],
+                )
+              : Text(
+                  text,
+                  style: style,
+                )),
     );
   }
 }

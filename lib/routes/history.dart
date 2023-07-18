@@ -2,6 +2,7 @@ import 'package:drnk/components/buttons/betterbutton.dart';
 import 'package:drnk/components/drink_listview.dart';
 import 'package:drnk/components/pagination.dart';
 import 'package:drnk/store/stores.dart';
+import 'package:drnk/utils/fns.dart';
 import 'package:drnk/utils/types.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,31 +88,6 @@ class HistoryState extends State<History> {
 
   int itemsPerPage = 10;
   int page = 1;
-
-  void openWidgetPopup(BuildContext context, Widget child) {
-    showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      useSafeArea: true,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15),
-          topRight: Radius.circular(15),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: child,
-          ),
-        );
-      },
-    );
-  }
 
   Widget removeDrinksConfirmation(BuildContext context) {
     return Container(
